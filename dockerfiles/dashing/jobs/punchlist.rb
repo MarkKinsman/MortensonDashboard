@@ -12,8 +12,8 @@ SCHEDULER.every '1s', :first_in => 0 do |job|
 
 
 
-  widgets.each do |e|
-    send_event(e, {open: count})
-    count += 1
-  end
+  #widgets.each do |e|
+  #  send_event(e, {open: count})
+  #  count += 1
+  #end
 end
