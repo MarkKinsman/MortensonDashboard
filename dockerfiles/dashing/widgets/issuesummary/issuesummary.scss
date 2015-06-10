@@ -26,11 +26,11 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
   .secondary {
     color: $value-color;
     font-size: x-large;
-    float: left;
+    text-align: left;
   }
 
   .secondary span {
-    float: right;
+    text-align: right;
   }
 
   .more-info {
