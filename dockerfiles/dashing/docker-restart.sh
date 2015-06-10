@@ -2,7 +2,7 @@
 
 cd /home/ec2-user/MortensonDashboard
 
-git pull origin master
+git pull origin dev
 
 cd dockerfiles/dashing
 
