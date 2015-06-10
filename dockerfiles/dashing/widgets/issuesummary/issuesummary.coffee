@@ -1,4 +1,4 @@
-class Dashing.IssueSummary extends Dashing.Widget
+class Dashing.Issuesummary extends Dashing.Widget
   @accessor 'current', Dashing.AnimatedValue
 
   @accessor 'difference', ->
