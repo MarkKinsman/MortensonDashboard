@@ -5,7 +5,7 @@ username=0
 password=0
 project=0
 widgets=['company_1','company_2','company_3','company_4','company_5','company_6','company_7','company_8','company_9','company_10','company_11','company_12']
-leaders = Hash.new()
+leaders = Hash.new({value: 0})
 count=0
 
 # :first_in sets how long it takes before the job is first run. In this case, it is run immediately
