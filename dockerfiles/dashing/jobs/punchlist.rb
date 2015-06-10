@@ -1,4 +1,4 @@
-#require 'rest-client'
+#equire 'rest-client'
 #require 'json'
 
 username=0
@@ -13,7 +13,7 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
 
 
   widgets.each do |e|
-    send_event(e, {title: e, open: count, ready: rand(100), complete: rand(200), closed: rand(300)})
+    send_event(e, {open: count, ready: rand(100), complete: rand(200), closed: rand(300)})
     count += 1
   end
 end
