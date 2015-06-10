@@ -18,13 +18,15 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
     color: $title-color;
   }
 
-  .primary {
+  h2 {
     color: $value-color;
+  }
+
+  .primary {
     font-size: xx-large;
   }
 
   .secondary {
-    color: $value-color;
     font-size: x-large;
     text-align: left;
   }
