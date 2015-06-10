@@ -20,16 +20,17 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
 
   .primary {
     color: $value-color;
+    font-size: xx-large;
   }
 
   .secondary {
     color: $value-color;
     font-size: x-large;
-    text-align: left;
+    float: left;
   }
 
   .secondary span {
-    text-align: right;
+    float: right;
   }
 
   .more-info {
