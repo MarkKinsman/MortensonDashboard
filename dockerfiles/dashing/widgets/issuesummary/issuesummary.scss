@@ -18,10 +18,18 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
     color: $title-color;
   }
 
-  .value {
+  .primary {
+    color: $value-color;
+  }
+
+  .secondary {
     color: $value-color;
     font-size: x-large;
     text-align: left;
+  }
+
+  .secondary span {
+    text-align: right;
   }
 
   .more-info {
