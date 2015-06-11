@@ -18,7 +18,7 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
     c = rand(200)
     f = rand(300)
     send_event(e, {title: e, open: count, ready: r, complete: c, closed: f})
-    leaders ={label: e, value: ( f / count }
+    leaders[e] = {label: e, value: ( f / count )}
     count += 1
   end
   send_event('leaderboard', { items: leaders.values })
