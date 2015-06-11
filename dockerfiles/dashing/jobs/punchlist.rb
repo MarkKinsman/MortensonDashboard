@@ -19,7 +19,8 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
     c = rand(20)
     f = rand(100)
     send_event(e, {title: e, open: o, ready: r, complete: c, closed: f})
-    leaders[e] = {label: e, value: (100 * (f / (o + r + c + f )))}
+    value = (100 * (f / (o + r + c + f ))) << "%"
+    leaders[e] = {label: e, value: value}
   end
-  send_event('leaderboard', { items: leaders.values << "%"})
+  send_event('leaderboard', { items: leaders.values })
 end
