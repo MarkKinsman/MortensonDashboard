@@ -14,12 +14,12 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
 
 
   widgets.each do |e|
-    o = rand(400)
-    r = rand(100)
-    c = rand(200)
-    f = rand(300)
-    send_event(e, {title: e, open: count, ready: r, complete: c, closed: f})
-    leaders[e] = {label: e, value: ( (f / (o + r + c + f )) *100)}
+    o = rand(100)
+    r = rand(20)
+    c = rand(20)
+    f = rand(100)
+    send_event(e, {title: e, open: o, ready: r, complete: c, closed: f})
+    leaders[e] = {label: e, value: (f / (o + r + c + f ) * 100)}
   end
   send_event('leaderboard', { items: leaders.values})
 end
