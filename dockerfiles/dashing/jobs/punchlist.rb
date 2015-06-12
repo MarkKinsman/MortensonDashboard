@@ -13,16 +13,21 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
   companies = Hash.new({title: 0, open: 0, ready: 0, complete: 0, closed: 0, total: 0})
 
 begin
-  File.open(File.expand_path("login", __FILE__ ), "r") do |rf|
+  File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
       username = rf.readline
       password = rf.readline
       project = rf.readline
   end
-  ticket = RestClient.get base_url + "api/login", {:params => {:username username, :password password}}
 rescue
   send_event('debug', {text: $!})
 else
   send_event('debug', {text: ticket})
+end
+
+begin
+  ticket = RestClient.get "https://bim360.autodesk.com/api/login", {:params => {:username username, :password password}}
+rescue RestClient::ExceptionWithResponse => err
+  send_event('debug', {text: err})
 end
 
   widgets.each do |e|
