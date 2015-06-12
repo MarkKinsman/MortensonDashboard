@@ -14,7 +14,7 @@ local_DIR="/home/ec2-user/MortensonDashboard/dockerfiles/dashing/"
 
 docker run -d -p 80:3030 \
     --name field_dashboard \
-    -e GEMS=rest-client \
+    -e GEMS="rest-client" \
     -v="$local_DIR"widgets:/widgets \
     -v="$local_DIR"config:/config \
     -v="$local_DIR"public:/public \

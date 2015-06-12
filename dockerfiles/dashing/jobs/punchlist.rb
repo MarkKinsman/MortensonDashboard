@@ -23,11 +23,11 @@ rescue
 end
 
 begin
-  ticket = RestClient.post base_url + "/api/login", :params => {:username username, :password password}
+  ticket = RestClient.post base_url + "/api/login", :params => {:username => username, :password => password}
 rescue => err
   send_event('debug', {text: err.response})
 else
-  send_event('debug', {text: ticket})
+  send_event('debug', {text: ticket.response})
 end
 
   widgets.each do |e|
