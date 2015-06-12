@@ -5,7 +5,7 @@ username=0
 password=0
 project=0
 widgets=['company_0','company_1','company_2','company_3','company_4','company_5','company_6','company_7','company_8','company_9','company_10','company_11']
-base_url = "https://bim360.autodesk.com/"
+base_url = "http://bim360.autodesk.com/"
 
 # :first_in sets how long it takes before the job is first run. In this case, it is run immediately
 SCHEDULER.every '1m', :first_in => 0 do |job|
@@ -20,14 +20,14 @@ begin
   end
 rescue
   send_event('debug', {text: $!})
-else
-  send_event('debug', {text: ticket})
 end
 
 begin
-  ticket = RestClient.get "https://bim360.autodesk.com/api/login", {:params => {:username username, :password password}}
-rescue RestClient::ExceptionWithResponse => err
-  send_event('debug', {text: err})
+  ticket = RestClient.get "http://bim360.autodesk.com/api/login", {:params => {:username username, :password password}}
+rescue => err
+  send_event('debug', {text: err.response})
+else
+  send_event('debug', {text: ticket})
 end
 
   widgets.each do |e|
