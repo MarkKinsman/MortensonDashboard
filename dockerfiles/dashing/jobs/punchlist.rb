@@ -1,4 +1,4 @@
-#equire 'rest-client'
+#require 'rest-client'
 #require 'json'
 
 username=0
@@ -24,7 +24,7 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
 
   companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
 
-  11.times do |i|
+  12.times do |i|
     send_event(widgets[i], {title: companies_array[i][0], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
   end
   send_event('leaderboard', { items: leaders.values })
