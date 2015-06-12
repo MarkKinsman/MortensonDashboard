@@ -23,7 +23,7 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
     leaders[e] = {label: e, value: "#{value}%"}
   end
 
-  companies_array = companies.sort_by { |k, v| v[:open] }
+  companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
 
   11.times do |i|
     send_event(widgets[i], {title: companies_array[i][0], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
