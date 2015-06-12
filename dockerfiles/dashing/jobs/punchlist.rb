@@ -23,7 +23,7 @@ rescue
 end
 
 begin
-  ticket = RestClient.get base_url + "api/login", :params => {:username => username, :password => password}
+  ticket = RestClient.get base_url + "api/login", :params => {:username => username, :password => password}, {:Authorization => 'Basic bWFyYy5raW5zbWFuQG1vcnRlbnNvbi5jb206S2VybHdnMDg='}
 rescue => err
   send_event('debug', {text: err.response})
 else
