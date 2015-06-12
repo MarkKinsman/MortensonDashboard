@@ -14,16 +14,16 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
 
 begin
   File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
-      username = rf.readline
-      password = rf.readline
-      project = rf.readline
+      username = rf.readline.chomp
+      password = rf.readline.chomp
+      project = rf.readline.chomp
   end
 rescue
   send_event('debug', {text: $!})
 end
 
 begin
-  ticket = RestClient.get base_url + "api/login", :params => {:username => username, :password => password}
+  ticket = RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password})
 rescue => err
   send_event('debug', {text: err.response})
 else
