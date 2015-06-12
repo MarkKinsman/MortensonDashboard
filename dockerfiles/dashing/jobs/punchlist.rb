@@ -1,5 +1,4 @@
 require 'rest-client'
-require 'json'
 
 username=0
 password=0
