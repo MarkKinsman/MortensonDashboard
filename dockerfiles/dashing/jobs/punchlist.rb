@@ -11,10 +11,11 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
   leaders = Hash.new({value: 0})
   companies = Hash.new({title: 0, open: 0, ready: 0, complete: 0, closed: 0, total: 0})
 
-  login = File.open('login', "r+")
-  username = login.readline
-  password = login.readline
-  project = login.readline
+  File.open('login', "r") do |rf|
+    username = rf.readline
+    password = rf.readline
+    project = rf.readline
+  end
 
   send_event('debug', {text: username})
 
