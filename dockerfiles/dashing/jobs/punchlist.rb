@@ -1,4 +1,5 @@
 require 'rest-client'
+require 'json'
 
 username=0
 password=0
@@ -10,6 +11,7 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
   leaders = Hash.new({value: 0})
   companies = Hash.new({title: 0, open: 0, ready: 0, complete: 0, closed: 0, total: 0})
 
+  
 
   widgets.each do |e|
     o = rand(100)
