@@ -8,7 +8,7 @@ widgets=['company_0','company_1','company_2','company_3','company_4','company_5'
 base_url = "http://bim360field.autodesk.com/"
 
 # :first_in sets how long it takes before the job is first run. In this case, it is run immediately
-SCHEDULER.every '1m', :first_in => 0 do |job|
+SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
   leaders = Hash.new({value: 0})
   companies = Hash.new({title: 0, open: 0, ready: 0, complete: 0, closed: 0, total: 0})
 
@@ -23,11 +23,11 @@ rescue
 end
 
 begin
-  ticket = RestClient.post base_url + "/api/login", :params => {:username => username, :password => password}
+  ticket = RestClient.get base_url + "api/login", :params => {:username => username, :password => password}
 rescue => err
   send_event('debug', {text: err.response})
 else
-  send_event('debug', {text: ticket.response + ticket.body})
+  send_event('debug', {text: ticket.response})
 end
 
   widgets.each do |e|
