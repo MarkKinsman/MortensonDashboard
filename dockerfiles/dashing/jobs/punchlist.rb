@@ -12,7 +12,7 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
   companies = Hash.new({title: 0, open: 0, ready: 0, complete: 0, closed: 0, total: 0})
 
 begin
-  File.open('../login', "r") do |rf|
+  File.open(File.expand_path("../login", __FILE__), "r") do |rf|
     begin
       username = rf.readline
       password = rf.readline
