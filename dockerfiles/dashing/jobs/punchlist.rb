@@ -26,7 +26,7 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
   companies_array = companies.sort_by { |k, v| v[:open] }
 
   11.times do |i|
-    send_event('company_#{i}', {open: companies_array[i][:open], ready: companies_array[i][:ready], complete: companies_array[i][:complete], closed: companies_array[i][:closed] })
+    send_event(widgets[i], {open: companies_array[i][:open], ready: companies_array[i][:ready], complete: companies_array[i][:complete], closed: companies_array[i][:closed] })
   end
   send_event('leaderboard', { items: leaders.values })
 end
