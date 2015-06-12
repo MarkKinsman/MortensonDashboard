@@ -10,7 +10,7 @@ count=1
 # :first_in sets how long it takes before the job is first run. In this case, it is run immediately
 SCHEDULER.every '1m', :first_in => 0 do |job|
   leaders = Hash.new({value: 0})
-  companies = Hash.new({title: "", open: 0, ready: 0, complete: 0, closed: 0, total: 0})
+  companies = Hash.new({title: 0, open: 0, ready: 0, complete: 0, closed: 0, total: 0})
 
 
   widgets.each do |e|
@@ -18,7 +18,7 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
     r = rand(20)
     c = rand(20)
     f = rand(100)
-    companies[e] = {title: e, open: o, ready: r, complete: c, closed: f, total: o + r + c + f }
+    companies[e.to_sym] = {title: e, open: o, ready: r, complete: c, closed: f, total: (o + r + c + f) }
     value = (f*100) / (o + r + c + f )
     leaders[e] = {label: e, value: "#{value}%"}
   end
