@@ -61,12 +61,16 @@ end
 
 begin
   companies.each do |k, v|
-    value = v[:closed] * 100 / v[:total]
-    leaders[v[:name]] = {label: v[:name], value: "#{value}%"}
-    total[:open] += v[:open]
-    total[:complete] += v[:complete]
-    total[:ready] += v[:ready]
-    total[:closed] += v[:closed]
+#    value = v[:closed] * 100 / v[:total]
+#    leaders[v[:name]] = {label: v[:name], value: "#{value}%"}
+#    total[:open] += v[:open]
+#    total[:complete] += v[:complete]
+#    total[:ready] += v[:ready]
+#    total[:closed] += v[:closed]
+    total[:open] += 1
+    total[:complete] += 1
+    total[:ready] += 1
+    total[:closed] += 1
   end
 rescue
   send_events('debug', {text: $!})
