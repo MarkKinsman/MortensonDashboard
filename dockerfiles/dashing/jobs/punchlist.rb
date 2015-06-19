@@ -13,6 +13,7 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
   project_ticket=0
   leaders = Hash.new({value: 0})
   companies = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
+  total = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
 
 begin
   File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
@@ -67,6 +68,15 @@ end
 #  end
 
   companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
+
+  companies_array.each do |c|
+    value = '%02d' % c[:closed] * 100 / c[:total]
+    leaders[c[:name]] = {label: c[:name], value: "#{value}%"}
+    total[:open] += c[:open]
+    total[:complete] += c[:complete]
+    total[:ready] += c[:ready]
+    total[:closed] += c[:closed]
+  end
 
   12.times do |i|
     send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
