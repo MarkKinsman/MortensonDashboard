@@ -23,7 +23,7 @@ rescue
 end
 
   stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password}))
-  ticket = stream{"ticket"}
+  ticket = stream["ticket"]
   stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket}))
 
 
