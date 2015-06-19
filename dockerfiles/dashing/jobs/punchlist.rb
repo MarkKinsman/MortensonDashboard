@@ -15,15 +15,15 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
   companies = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
   total = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
 
-begin
-  File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
-      username = rf.readline.chomp
-      password = rf.readline.chomp
-      project = rf.readline.chomp
+  begin
+    File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
+        username = rf.readline.chomp
+        password = rf.readline.chomp
+        project = rf.readline.chomp
+    end
+  rescue
+    send_event('debug', {text: $!})
   end
-rescue
-  send_event('debug', {text: $!})
-end
 
   stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password}))
   login_ticket = stream["ticket"]
@@ -33,16 +33,17 @@ end
       project_ticket = projects["project_id"]
     end
   end
+
   stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => login_ticket, :project_id => project_ticket}))
   stream.each do |c|
     companies[c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
   end
 
-begin
-  stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => login_ticket, :project_id => project_ticket}}))
-rescue
-  send_event('debug', {text: $!})
-end
+  begin
+    stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => login_ticket, :project_id => project_ticket}}))
+  rescue
+    send_event('debug', {text: $!})
+  end
 
   stream.each do |i|
     if i["issue_type"].include? "Punch List"
@@ -55,6 +56,7 @@ end
       companies[i["company_id"]][:total] += 1
     end
   end
+
   send_events('debug', {text: stream})
 
   companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
@@ -76,6 +78,6 @@ end
   12.times do |i|
     send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
   end
-  send_event('total', {title: "Total", open: total[:open], closed: total[:closed], ready: total[:ready], complete: total[:complete]})
+#  send_event('total', {title: "Total", open: total[:open], closed: total[:closed], ready: total[:ready], complete: total[:complete]})
   send_event('leaderboard', { items: leaders.values })
 end
