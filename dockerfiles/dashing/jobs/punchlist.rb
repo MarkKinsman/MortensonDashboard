@@ -55,7 +55,6 @@ end
       companies[i["company_id"]][:total] += 1
     end
   end
-  send_event('debug', {text: stream})
 
   companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
 
@@ -75,6 +74,8 @@ begin
 rescue
   send_events('debug', {text: $!})
 end
+
+  send_events('debug', {text: total})
 
   12.times do |i|
     send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
