@@ -12,7 +12,7 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
   login_ticket=0
   project_ticket=0
   leaders = Hash.new({value: 0})
-  companies = Hash.new({title: 0, open: 0, ready: 0, complete: 0, closed: 0, total: 0})
+  companies = Hash.new({name: 0, open: 0, ready: 0, complete: 0, closed: 0, total: 0})
 
 begin
   File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
@@ -32,19 +32,23 @@ end
       project_ticket = projects["project_id"]
     end
   end
-  stream = RestClient.get("http://bim360field.autodesk.com/fieldapi/companies/v1", :params => {:project_id => project_ticket})
+  stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => login_ticket, :project_id => project_ticket}))
+  stream.each do |c|
+    companies[c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
+  end
+
 
   send_event('debug', {text: stream})
 
-  widgets.each do |e|
-    o = rand(100)
-    r = rand(20)
-    c = rand(20)
-    f = rand(100)
-    companies[e.to_sym] = {title: e, open: o, ready: r, complete: c, closed: f, total: (o + r + c + f) }
-    value = (f*100) / (o + r + c + f )
-    leaders[e] = {label: e, value: "#{value}%"}
-  end
+#  widgets.each do |e|
+#    o = rand(100)
+#    r = rand(20)
+#    c = rand(20)
+#    f = rand(100)
+#    companies[e.to_sym] = {name: e, open: o, ready: r, complete: c, closed: f, total: (o + r + c + f) }
+#    value = (f*100) / (o + r + c + f )
+#    leaders[e] = {label: e, value: "#{value}%"}
+#  end
 
   companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
 
