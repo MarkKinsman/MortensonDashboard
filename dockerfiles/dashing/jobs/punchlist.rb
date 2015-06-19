@@ -28,7 +28,9 @@ end
   login_ticket = stream["ticket"]
   stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket}))
   stream.each do |projects|
-    projects["name"] == project ? project_ticket = projects["project_id"] :
+    if projects["name"] == project
+      project_ticket = projects["project_id"]
+    end
   end
 
   send_event('debug', {text: project_ticket})
