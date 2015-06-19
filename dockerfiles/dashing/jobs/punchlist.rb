@@ -22,8 +22,9 @@ rescue
   send_event('debug', {text: $!})
 end
 
-  ticket = RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password})
-  send_event('debug', {text: ticket})
+  ticket = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password}))
+
+  send_event('debug', {text: ticket["ticket"]})
 
   widgets.each do |e|
     o = rand(100)
