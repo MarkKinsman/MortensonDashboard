@@ -4,13 +4,13 @@ require 'json'
 username=0
 password=0
 project=0
-login_ticket=0
-project_ticket=0
+
 widgets=['company_0','company_1','company_2','company_3','company_4','company_5','company_6','company_7','company_8','company_9','company_10','company_11']
-base_url = "http://bim360field.autodesk.com/"
 
 # :first_in sets how long it takes before the job is first run. In this case, it is run immediately
 SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
+  login_ticket=0
+  project_ticket=0
   leaders = Hash.new({value: 0})
   companies = Hash.new({title: 0, open: 0, ready: 0, complete: 0, closed: 0, total: 0})
 
@@ -26,14 +26,15 @@ end
 
   stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password}))
   login_ticket = stream["ticket"]
-  stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket}))
+  stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => login_ticket}))
   stream.each do |projects|
     if projects["name"] == project
       project_ticket = projects["project_id"]
     end
   end
+  stream = RestClient.get("http://bim360field.autodesk.com/fieldapi/companies/v1", :params => {:project_id => project_ticket})
 
-  send_event('debug', {text: project_ticket})
+  send_event('debug', {text: stream})
 
   widgets.each do |e|
     o = rand(100)
