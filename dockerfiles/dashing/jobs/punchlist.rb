@@ -57,19 +57,7 @@ end
   end
   send_event('debug', {text: stream})
 
-#  widgets.each do |e|
-#    o = rand(100)
-#    r = rand(20)
-#    c = rand(20)
-#    f = rand(100)
-#    companies[e.to_sym] = {name: e, open: o, ready: r, complete: c, closed: f, total: (o + r + c + f) }
-#    value = (f*100) / (o + r + c + f )
-#    leaders[e] = {label: e, value: "#{value}%"}
-#  end
-
-  companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
-
-  companies_array.each do |c|
+  companies.each do |c|
     value = '%02d' % c[:closed] * 100 / c[:total]
     leaders[c[:name]] = {label: c[:name], value: "#{value}%"}
     total[:open] += c[:open]
@@ -77,6 +65,8 @@ end
     total[:ready] += c[:ready]
     total[:closed] += c[:closed]
   end
+
+  companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
 
   12.times do |i|
     send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
