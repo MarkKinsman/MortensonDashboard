@@ -58,24 +58,21 @@ end
 
   companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
 
-begin
-  companies.each do |k, v|
+#begin
+#  companies.each do |k, v|
 #    value = v[:closed] * 100 / v[:total]
 #    leaders[v[:name]] = {label: v[:name], value: "#{value}%"}
 #    total[:open] += v[:open]
 #    total[:complete] += v[:complete]
 #    total[:ready] += v[:ready]
 #    total[:closed] += v[:closed]
-    total[:open] += 1
-    total[:complete] += 1
-    total[:ready] += 1
-    total[:closed] += 1
-  end
-rescue
-  send_events('debug', {text: $!})
-end
+#
+#  end
+#rescue
+#  send_events('debug', {text: $!})
+#end
 
-  send_events('debug', {text: total})
+  send_events('debug', {text: stream})
 
   12.times do |i|
     send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
