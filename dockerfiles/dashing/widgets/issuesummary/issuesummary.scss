@@ -16,6 +16,11 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
 
   .title {
     color: $title-color;
+    font-size: x-large;
+    line-height: 1.25em;
+    height: 2.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .value {
@@ -36,10 +41,6 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
 
   .more-info {
     color: $moreinfo-color;
-  }
-
-  .updated-at {
-    color: rgba(0, 0, 0, 0.3);
   }
 
 }
