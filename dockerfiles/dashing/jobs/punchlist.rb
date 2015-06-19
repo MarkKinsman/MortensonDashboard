@@ -36,7 +36,7 @@ end
   stream.each do |c|
     companies[c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
   end
-  stream = JSON.parse(RestClient::Request.execute(:method => :get, :url => "http://bim360field.autodesk.com/api/get_issues/", :params => {:ticket => login_ticket, :project_id => project_ticket}, :timeout => -1))
+  stream = JSON.parse(RestClient::Request.execute(:method => :get, :url => "http://bim360field.autodesk.com/api/get_issues/", :headers {:params => {:ticket => login_ticket, :project_id => project_ticket}}, :timeout => nil))
 
 #  stream.each do |i|
 #    if i["issue_type"].include? "Punch List"
