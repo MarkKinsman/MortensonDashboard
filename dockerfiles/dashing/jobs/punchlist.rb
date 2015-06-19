@@ -4,6 +4,8 @@ require 'json'
 username=0
 password=0
 project=0
+login_ticket=0
+project_ticket=0
 widgets=['company_0','company_1','company_2','company_3','company_4','company_5','company_6','company_7','company_8','company_9','company_10','company_11']
 base_url = "http://bim360field.autodesk.com/"
 
@@ -23,11 +25,13 @@ rescue
 end
 
   stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password}))
-  ticket = stream["ticket"]
+  login_ticket = stream["ticket"]
   stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket}))
+  stream.each do |projects|
+    projects["name"] == project ? project_ticket = projects["project_id"] :
+  end
 
-
-  send_event('debug', {text: stream})
+  send_event('debug', {text: project_ticket})
 
   widgets.each do |e|
     o = rand(100)
