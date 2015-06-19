@@ -13,6 +13,7 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
   project_ticket=0
   leaders = Hash.new({value: 0})
   companies = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
+  total = {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
 
   begin
     File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
@@ -40,7 +41,7 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
   rescue
     send_event('debug', {text: "Companies: " << $!})
   end
-  
+
   begin
     stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => login_ticket, :project_id => project_ticket}}))
     send_event('debug', {text: stream})
@@ -52,12 +53,21 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
     stream.each do |i|
       if i["issue_type"].include? "Punch List"
         case i["status"]
-          when "Open" then companies[i["company_id"]][:open] += 1
-          when "Work Completed" then companies[i["company_id"]][:complete] += 1
-          when "Ready to Inspect" then companies[i["company_id"]][:ready] += 1
-          when "Closed" then companies[i["company_id"]][:closed] += 1
+          when "Open"
+            companies[i["company_id"]][:open] += 1
+            total[:open] += 1
+          when "Work Completed"
+            companies[i["company_id"]][:complete] += 1
+            total[:complete] += 1
+          when "Ready to Inspect"
+            companies[i["company_id"]][:ready] += 1
+            total[:ready] += 1
+          when "Closed"
+            companies[i["company_id"]][:closed] += 1
+            total[:closed] += 1
         end
         companies[i["company_id"]][:total] += 1
+        total[:total] += 1
       end
     end
   rescue
