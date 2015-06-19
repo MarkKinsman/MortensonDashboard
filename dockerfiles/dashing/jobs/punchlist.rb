@@ -44,7 +44,6 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
 
   begin
     stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => login_ticket, :project_id => project_ticket}}))
-    send_event('debug', {text: stream})
   rescue
     send_event('debug', {text: "Issues: " << $!})
   end
@@ -76,9 +75,10 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
 
   begin
     companies.each do |k, v|
-      #value = '%02d' % v[:closed] * 100 / v[:total]
-      #leaders[v[:name]] = {label: v[:name], value: "#{value}%"}
-      send_event('debug', {text: v})
+      closed = v[:closed]
+      total = v[:total]
+      value = '%02d' % closed * 100 / total
+      leaders[v[:name]] = {label: v[:name], value: "#{value}%"}
     end
   rescue
     send_event('debug', {text: "Find Leaders: " << $!})
