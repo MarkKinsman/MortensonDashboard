@@ -76,8 +76,9 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
 
   begin
     companies.each do |k, v|
-      value = '%02d' % v[:closed] * 100 / v[:total]
-      leaders[v[:name]] = {label: v[:name], value: "#{value}%"}
+      #value = '%02d' % v[:closed] * 100 / v[:total]
+      #leaders[v[:name]] = {label: v[:name], value: "#{value}%"}
+      send_event('debug', {text: v})
     end
   rescue
     send_event('debug', {text: "Find Leaders: " << $!})
