@@ -57,13 +57,13 @@ end
   end
   send_event('debug', {text: stream})
 
-  companies.each do |c|
-    value = '%02d' % c[:closed] * 100 / c[:total]
-    leaders[c[:name]] = {label: c[:name], value: "#{value}%"}
-    total[:open] += c[:open]
-    total[:complete] += c[:complete]
-    total[:ready] += c[:ready]
-    total[:closed] += c[:closed]
+  companies_array.each do |c|
+    value = '%02d' % c[1][:closed] * 100 / c[1][:total]
+    leaders[c[1][:name]] = {label: c[1][:name], value: "#{value}%"}
+    total[:open] += c[1][:open]
+    total[:complete] += c[1][:complete]
+    total[:ready] += c[1][:ready]
+    total[:closed] += c[1][:closed]
   end
 
   companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
