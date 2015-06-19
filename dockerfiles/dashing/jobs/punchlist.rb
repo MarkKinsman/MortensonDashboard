@@ -38,9 +38,9 @@ end
   end
 
 begin
-  stream = JSON.parse(RestClient::Request.execute(method: => :get, url: => "http://bim360field.autodesk.com/api/get_issues/", timeout: => nil, headers: {:params => {:ticket => login_ticket, :project_id => project_ticket}}))
+  stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => login_ticket, :project_id => project_ticket}}))
 rescue
-  send_event('debug', {:text: $!})
+  send_event('debug', {text: $!})
 end
 
 #  stream.each do |i|
