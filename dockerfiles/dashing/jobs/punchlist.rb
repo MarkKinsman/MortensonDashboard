@@ -12,7 +12,7 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
   login_ticket=0
   project_ticket=0
   leaders = Hash.new({value: 0})
-  companies = Hash.new({name: 0, open: 0, ready: 0, complete: 0, closed: 0, total: 0})
+  companies = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
 
 begin
   File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
@@ -36,8 +36,18 @@ end
   stream.each do |c|
     companies[c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
   end
-
-
+  stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/get_issues", :params => {:ticket => login_ticket, :project_id => project_ticket}))
+  stream.each do |i|
+    if i["issue_type"].include? "Punch List"
+      case i["status"]
+        when "Open" then companies[i["company_id"]][:open] += 1
+        when "Work Completed" then companies[i["company_id"]][:complete] += 1
+        when "Ready to Inspect" then companies[i["company_id"]][:ready] += 1
+        when "Closed" then companies[i["company_id"]][:closed] += 1
+      end
+      companies[i["company_id"]][:total] += 1
+    end
+  end
   send_event('debug', {text: stream})
 
 #  widgets.each do |e|
@@ -53,7 +63,7 @@ end
   companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
 
   12.times do |i|
-    send_event(widgets[i], {title: companies_array[i][0], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
+    send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
   end
   send_event('leaderboard', { items: leaders.values })
 end
