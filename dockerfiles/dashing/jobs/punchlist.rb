@@ -25,10 +25,10 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
         project = rf.readline.chomp
     end
   rescue Exception => e
-    send_event('debug', {text: debug_console <<  e})
+    send_event('debug', {text: debug_console << "Open File Error" << e << " -> "})
+  else
+    send_event('debug', {text: debug_console << "Open File Done -> "})
   end
-
-  send_event('debug', {text: debug_console << "Open File Done -> "})
 
   begin
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password}))
@@ -43,19 +43,19 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
     stream.each do |c|
       companies[c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
     end
-  rescue
-    send_event('debug', {text: debug_console << $!})
+  rescue Exception => e
+    send_event('debug', {text: debug_console << "Companies Download Error" << e << " -> "})
+  else
+    send_event('debug', {text: debug_console << "Companies Download Done -> "})
   end
-
-  send_event('debug', {text: debug_console << "Companies Download Done -> "})
 
   begin
     stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => login_ticket, :project_id => project_ticket}}))
-  rescue
-    send_event('debug', {text: debug_console  << $!})
+  rescue Exception => e
+    send_event('debug', {text: debug_console << "Issues Download Error" << e << " -> "})
+  else
+    send_event('debug', {text: debug_console << "Issues Download Done -> "})
   end
-
-  send_event('debug', {text: debug_console << "Issues Download Done -> "})
 
   begin
     stream.each do |i|
@@ -78,11 +78,11 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
         total[:total] += 1
       end
     end
-  rescue
-    send_event('debug', {text: debug_console << $!})
+  rescue Exception => e
+    send_event('debug', {text: debug_console << "Count Issues Error" << e << " -> "})
+  else
+    send_event('debug', {text: debug_console << "Count Issues Done -> " })
   end
-
-  send_event('debug', {text: debug_console << "Count Issues Done -> " })
 
   begin
     companies.each do |k, v|
@@ -96,11 +96,11 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
 #      send_event('debug', {text: debug_console})
 #      leaders[v[:name]] = {label: v[:name], value: "#{value}%"}
     end
-  rescue
-    send_event('debug', {text: debug_console << $!})
+  rescue Exception => e
+    send_event('debug', {text: debug_console << "Find Leaders Error" << e << " -> "})
+  else
+    send_event('debug', {text: debug_console << "Find Leaders Done -> " })
   end
-
-  send_event('debug', {text: debug_console << "Find Leaders Done -> " })
 
   begin
     companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
@@ -109,10 +109,10 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
     end
     send_event('total', {title: "Total", open: total[:open], closed: total[:closed], ready: total[:ready], complete: total[:complete]})
     send_event('leaderboard', { items: leaders.values })
-  rescue
-    send_event('debug', {text: debug_console << $!})
+  rescue Exception => e
+    send_event('debug', {text: debug_console << "Display Error" << e << " -> "})
+  else
+      send_event('debug', {text: debug_console << "Display Done -> " })
   end
-
-  send_event('debug', {text: debug_console << "Display Done -> " })
 
 end
