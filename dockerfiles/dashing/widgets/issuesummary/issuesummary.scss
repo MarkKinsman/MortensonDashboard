@@ -37,9 +37,7 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
     color: $value-color;
     font-size: x-large;
     text-align: left;
-  }
-
-  .more-info {
-    color: $moreinfo-color;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
   }
 }
