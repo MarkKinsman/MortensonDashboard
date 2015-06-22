@@ -75,8 +75,8 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
 
   begin
     companies.each do |k, v|
-      closed = v[:closed]
-      total = v[:total]
+      closed = v[:closed].to_i
+      total = v[:total].to_i
       value = (closed * 100) / total
       leaders[v[:name]] = {label: v[:name], value: "#{value}%"}
     end
