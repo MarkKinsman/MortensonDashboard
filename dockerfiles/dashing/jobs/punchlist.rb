@@ -89,7 +89,7 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
       if v[:total] != 0
 	      send_event('debug', {text: debug_console << (v[:closed]*100/v[:total]).to_s << " "})
         value = (v[:closed] * 100) / v[:total]
-        leaders[v[:name]] = {label: v[:name], value:  "#{"%02d" % value}%"}
+        leaders[v[:name]] = {label: v[:name], value: value}
       end
     end
   rescue Exception => e

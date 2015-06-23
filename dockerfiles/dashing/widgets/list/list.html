@@ -2,15 +2,17 @@
 
 <ol>
   <li data-foreach-item="items.sortedByDescending.value">
-    <span class="label" data-bind="item.label"></span>
+    <span class="value">%</span>
     <span class="value" data-bind="item.value"></span>
+    <span class="label" data-bind="item.label"></span>
   </li>
 </ol>
 
 <ul class="list-nostyle">
-  <li data-foreach-item="items.sortedByDescending.value">
-    <span class="label" data-bind="item.label"></span>
+  <li data-foreach-item="items.value">
     <span class="value" data-bind="item.value"></span>
+    <span class="label" data-bind="item.label"></span>
+
   </li>
 </ul>
 

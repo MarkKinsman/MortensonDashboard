@@ -17,6 +17,7 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
   vertical-align: top;
 
   .title {
+    font-size: x-large;
     color: $title-color;
   }
 
@@ -24,6 +25,7 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
     margin: 0 15px;
     text-align: left;
     color: $label-color;
+    height: 600;
   }
 
   ol {
@@ -32,6 +34,12 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
 
   li {
     margin-bottom: 5px;
+//    text-overflow: ellipsis;
+    white-space: nowrap;
+//    overflow: hidden;
+    display: block;
+    height: 1.25em;
+//    float: left;
   }
 
   .list-nostyle {
@@ -39,15 +47,23 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
   }
 
   .label {
-    color: $label-color;
-    overflow: hidden;
+//    float: left;
+//    display: block;
     text-overflow: ellipsis;
-    width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    color: $label-color;  
+    width: 260px;
+    display: inline-block;
   }
 
   .value {
     float: right;
-    margin-left: 12px;
+    text-align: right;
+    display: inline-block;
+//    width: 40px; 
+//    margin-left: 12px;
+//    padding-left: 40px; 
     font-weight: 600;
     color: $value-color;
   }
