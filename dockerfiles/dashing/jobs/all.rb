@@ -19,7 +19,7 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
   companies = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
   total = {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
 
-  send_event('debug_widget', {text: debug_console << "StartCycle -> "})
+  send_event(debug_widget, {text: debug_console << "StartCycle -> "})
 
   begin
     File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
@@ -28,9 +28,9 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
         project = rf.readline.chomp
     end
   rescue Exception => e
-    send_event('debug_widget', {text: debug_console << "Open File Error" << e.message << " -> "})
+    send_event(debug_widget, {text: debug_console << "Open File Error" << e.message << " -> "})
   else
-    send_event('debug_widget', {text: debug_console << "Open File Done -> "})
+    send_event(debug_widget, {text: debug_console << "Open File Done -> "})
   end
 
   begin
@@ -47,22 +47,22 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
       companies[c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
     end
   rescue Exception => e
-    send_event('debug_widget', {text: debug_console << "Companies Download Error" << e.message << " -> "})
+    send_event(debug_widget, {text: debug_console << "Companies Download Error" << e.message << " -> "})
   else
-    send_event('debug_widget', {text: debug_console << "Companies Download Done -> "})
+    send_event(debug_widget, {text: debug_console << "Companies Download Done -> "})
   end
 
   begin
     stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => login_ticket, :project_id => project_ticket}}))
   rescue Exception => e
-    send_event('debug_widget', {text: debug_console << "Issues Download Error" << e.message << " -> "})
+    send_event(debug_widget, {text: debug_console << "Issues Download Error" << e.message << " -> "})
   else
-    send_event('debug_widget', {text: debug_console << "Issues Download Done -> "})
+    send_event(debug_widget, {text: debug_console << "Issues Download Done -> "})
   end
 
   begin
     stream.each do |i|
-      if i["issue_type"].include? "Punch List"
+#      if i["issue_type"].include? "Punch List"
         case i["status"]
           when "Open"
             companies[i["company_id"]][:open] += 1
@@ -79,12 +79,12 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
         end
         companies[i["company_id"]][:total] += 1
         total[:total] += 1
-      end
+#      end
     end
   rescue Exception => e
-    send_event('debug_widget', {text: debug_console << "Count Issues Error" << e.message << " -> "})
+    send_event(debug_widget, {text: debug_console << "Count Issues Error" << e.message << " -> "})
   else
-    send_event('debug_widget', {text: debug_console << "Count Issues Done -> " })
+    send_event(debug_widget, {text: debug_console << "Count Issues Done -> " })
   end
 
   begin
@@ -96,9 +96,9 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
       end
     end
   rescue Exception => e
-    send_event('debug_widget', {text: debug_console << "Find Leaders Error" << e.message <<  " -> "})
+    send_event(debug_widget, {text: debug_console << "Find Leaders Error" << e.message <<  " -> "})
   else
-    send_event('debug_widget', {text: debug_console << "Find Leaders Done -> " })
+    send_event(debug_widget, {text: debug_console << "Find Leaders Done -> " })
   end
 
   begin
@@ -106,11 +106,11 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
     12.times do |i|
       send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
     end
-    send_event('total_widget', {title: "Total", open: total[:open], closed: total[:closed], ready: total[:ready], complete: total[:complete]})
-    send_event('leaderboard_widget', { items: leaders.values })
+    send_event(total_widget, {title: "Total", open: total[:open], closed: total[:closed], ready: total[:ready], complete: total[:complete]})
+    send_event(leaderboard_widget, { items: leaders.values })
   rescue Exception => e
-    send_event('debug_widget', {text: debug_console << "Display Error" << e.message << " -> "})
+    send_event(debug_widget, {text: debug_console << "Display Error" << e.message << " -> "})
   else
-      send_event('debug_widget', {text: debug_console << "Display Done -> " })
+      send_event(debug_widget, {text: debug_console << "Display Done -> " })
   end
 end
