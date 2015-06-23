@@ -36,17 +36,38 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
   }
 
   .secondary {
+    float: left;
     color: $value-color;
+    width: 260px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap; 
     font-size: x-large;
     text-align: left;
+    display: inline-block;
   }
 
   .secondaryValue {
     float: right;
+    width: 40; 
+    display: inline-block;
   }
 
   .h2 {
     margin-bottom: 0px;
     padding-bottom: 0px;
+    font-size: x-large;
+    text-align: left;
+  }
+
+  .status {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    display: block;
+    font-size: x-large;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 }
