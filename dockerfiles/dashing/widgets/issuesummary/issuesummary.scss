@@ -1,0 +1,73 @@
+// ----------------------------------------------------------------------------
+// Sass declarations
+// ----------------------------------------------------------------------------
+$background-color:  #47bbb3;
+$value-color:       #fff;
+
+$title-color:       rgba(255, 255, 255, 0.7);
+$moreinfo-color:    rgba(255, 255, 255, 0.7);
+
+// ----------------------------------------------------------------------------
+// widget-issuesummary styles
+// ----------------------------------------------------------------------------
+.widget-issuesummary {
+
+  background-color: $background-color;
+
+  .title {
+    color: $title-color;
+    font-size: x-large;
+    line-height: 1.25em;
+    height: 2.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .value {
+    color: $value-color;
+    line-height: 80%
+  }
+
+  .primary {
+    color: $value-color;
+    font-size: xx-large;
+    margin-bottom: 10px;
+    padding-bottom: 0px;
+  }
+
+  .secondary {
+    float: left;
+    color: $value-color;
+    width: 260px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap; 
+    font-size: x-large;
+    text-align: left;
+    display: inline-block;
+  }
+
+  .secondaryValue {
+    float: right;
+    width: 40; 
+    display: inline-block;
+  }
+
+  .h2 {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    font-size: x-large;
+    text-align: left;
+  }
+
+  .status {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    display: block;
+    font-size: x-large;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
