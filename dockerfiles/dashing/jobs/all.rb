@@ -106,7 +106,7 @@ SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
     12.times do |i|
       send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
     end
-    send_event(total_widget, {title: "Total", open: total[:open], closed: total[:closed], ready: total[:ready], complete: total[:complete]})
+    send_event(total_widget, {title: "All Issues Total", open: total[:open], closed: total[:closed], ready: total[:ready], complete: total[:complete]})
     send_event(leaderboard_widget, { items: leaders.values })
   rescue Exception => e
     send_event(debug_widget, {text: debug_console << "Display Error" << e.message << " -> "})
