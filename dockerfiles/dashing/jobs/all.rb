@@ -12,7 +12,7 @@ leaderboard_widget = 'all_leaderboard'
 debug_widget = 'all_debug'
 
 # :first_in sets how long it takes before the job is first run. In this case, it is run immediately
-SCHEDULER.every '1m', :first_in => 0, allow_overlapping: false do |job|
+SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   login_ticket=0
   project_ticket=0
   leaders = Hash.new({value: 0})
