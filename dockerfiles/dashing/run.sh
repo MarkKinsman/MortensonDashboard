@@ -35,4 +35,4 @@ fi
 echo "export TERM=xterm" >> ~/.bash_profile
 
 # Start dashing
-exec dashing start $PORT_ARG
+exec rackup -p 3030 -s webrick
