@@ -5,10 +5,18 @@ set -o errexit
 WORKDIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
 cd "${WORKDIR}"/../../
-#git pull origin dev
-#git checkout dev
+
+git pull origin master
+git checkout master
 
 cd "${WORKDIR}"
+
+# if previous container with same name exists, delete it and build new
+if [[ -n $(sudo docker ps -a | grep -i "field_dashboard" | awk '{print $1}') ]];
+then
+    echo -e "\nDeleting previous container named: field_dashboard"
+    sudo docker ps -a | grep -i "field_dashboard" | awk '{print $1}' | xargs docker rm -f
+fi
 
   # if an arguement was passed check if it is a container, if not ask if user wants to create one
   if [[ $# -ne 0 && ! $(docker ps -a | grep -i $1) ]];
@@ -41,7 +49,7 @@ cd "${WORKDIR}"
   fi
 
 echo -e "\nBuilding new field_dashboard containter"
-docker build -t markkinsman/dashing .
+sudo docker build -t markkinsman/dashing .
 
 docker run -d -p $PORT:3030 \
     --name $NAME \
@@ -53,6 +61,6 @@ docker run -d -p $PORT:3030 \
     -v="$WORKDIR"/dashboards:/dashboards \
     markkinsman/dashing
 
-docker ps
+sudo docker ps
 
 echo -e "\nDone!\n"
