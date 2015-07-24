@@ -45,9 +45,9 @@ cd "${WORKDIR}"
   fi
 
 echo -e "\nBuilding new dashboard containter"
-docker build -t markkinsman/dashing .
+sudo docker build -t markkinsman/dashing .
 
-docker run -d -p $PORT:3030 \
+sudo docker run -d -p $PORT:3030 \
     --name $NAME \
     -e VIRTUAL_HOST="$NAME".mortenson.systems \
     -e GEMS="rest-client" \
@@ -58,6 +58,6 @@ docker run -d -p $PORT:3030 \
     -v="$WORKDIR"/dashboards:/dashboards \
     markkinsman/dashing
 
-docker ps
+sudo docker ps
 
 echo -e "\nDone!\n"
