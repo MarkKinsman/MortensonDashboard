@@ -24,9 +24,9 @@ module Field
         end
       end
     rescue Exception => e
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Unable to get Tickets" << e.message << " -> "})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Unable to get Tickets" << e.message << " -> "}) end
     else
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Got Tickets ->"})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Got Tickets ->"}) end
     end
   end
 
@@ -41,9 +41,9 @@ module Field
         companies[:companies][c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
       end
     rescue Exception => e
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Error" << e.message << " -> "})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Error" << e.message << " -> "}) end
     else
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Done -> "})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Done -> "}) end
     end
   end
 
@@ -55,9 +55,9 @@ module Field
     begin
       stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => tickets[0], :project_id => tickets[1]}}))
     rescue Exception => e
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" << e.message << " -> "})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" << e.message << " -> "}) end
     else
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Done -> "})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Done -> "}) end
     end
   end
 
@@ -86,9 +86,9 @@ module Field
           companies[:total][:total] += 1
       end
     rescue Exception => e
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" << e.message << " -> "})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" << e.message << " -> "}) end
     else
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Done -> " })
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Done -> " }) end
     end
   end
 
@@ -105,9 +105,9 @@ module Field
       end
       send_event(leaderboard_widget, { items: leaders.values })
     rescue Exception => e
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Error" << e.message <<  " -> "})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Error" << e.message <<  " -> "}) end
     else
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Done -> " })
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Done -> " }) end
     end
   end
 
@@ -122,9 +122,9 @@ module Field
       end
       send_event(widgets[1][0], {title: "All Issues Total", open: companies[:total][:open], closed: companies[:total][:closed], ready: companies[:total][:ready], complete: companies[:total][:complete]})
     rescue Exception => e
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Error" << e.message << " -> "})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Error" << e.message << " -> "}) end
     else
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Done -> " })
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Done -> " }) end
     end
   end
 end
