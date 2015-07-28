@@ -1,116 +1,25 @@
 require 'rest-client'
 require 'json'
+require_relative 'bim360helper'
 
-username=0
-password=0
-project=0
-debug_console = ""
+#Widgets
+count_widgets=[['all_total'],['all_company_0','all_company_1','all_company_2','all_company_3','all_company_4','all_company_5','all_company_6','all_company_7','all_company_8','all_company_9','all_company_10','all_company_11']]
+debug = ['all_debug', ""]
 
-widgets=['all_company_0','all_company_1','all_company_2','all_company_3','all_company_4','all_company_5','all_company_6','all_company_7','all_company_8','all_company_9','all_company_10','all_company_11']
-total_widget = 'all_total'
-leaderboard_widget = 'all_leaderboard'
-debug_widget = 'all_debug'
+#Local Variables
+login = [0, 0, 0]
+tickets = [0,0]
+leaders = Hash.new({value: 0})
+companies = {total: {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0},companies: Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})}
 
 # :first_in sets how long it takes before the job is first run. In this case, it is run immediately
 SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
-  login_ticket=0
-  project_ticket=0
-  leaders = Hash.new({value: 0})
-  companies = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
-  total = {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
 
-  send_event(debug_widget, {text: debug_console << "StartCycle -> "})
-
-  begin
-    File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
-        username = rf.readline.chomp
-        password = rf.readline.chomp
-        project = rf.readline.chomp
-    end
-  rescue Exception => e
-    send_event(debug_widget, {text: debug_console << "Open File Error" << e.message << " -> "})
-  else
-    send_event(debug_widget, {text: debug_console << "Open File Done -> "})
-  end
-
-  begin
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password}))
-    login_ticket = stream["ticket"]
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => login_ticket}))
-    stream.each do |p|
-      if p["name"] == project
-        project_ticket = p["project_id"]
-      end
-    end
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => login_ticket, :project_id => project_ticket}))
-    stream.each do |c|
-      companies[c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
-    end
-  rescue Exception => e
-    send_event(debug_widget, {text: debug_console << "Companies Download Error" << e.message << " -> "})
-  else
-    send_event(debug_widget, {text: debug_console << "Companies Download Done -> "})
-  end
-
-  begin
-    stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => login_ticket, :project_id => project_ticket}}))
-  rescue Exception => e
-    send_event(debug_widget, {text: debug_console << "Issues Download Error" << e.message << " -> "})
-  else
-    send_event(debug_widget, {text: debug_console << "Issues Download Done -> "})
-  end
-
-  begin
-    stream.each do |i|
-#      if i["issue_type"].include? "Punch List"
-        case i["status"]
-          when "Open"
-            companies[i["company_id"]][:open] += 1
-            total[:open] += 1
-          when "Work Completed"
-            companies[i["company_id"]][:complete] += 1
-            total[:complete] += 1
-          when "Ready to Inspect"
-            companies[i["company_id"]][:ready] += 1
-            total[:ready] += 1
-          when "Closed"
-            companies[i["company_id"]][:closed] += 1
-            total[:closed] += 1
-        end
-        companies[i["company_id"]][:total] += 1
-        total[:total] += 1
-#      end
-    end
-  rescue Exception => e
-    send_event(debug_widget, {text: debug_console << "Count Issues Error" << e.message << " -> "})
-  else
-    send_event(debug_widget, {text: debug_console << "Count Issues Done -> " })
-  end
-
-  begin
-    companies.each do |k, v|
-      if v[:total] != 0
-#	send_event('debug_widget', {text: debug_console << (v[:closed]*100/v[:total]).to_s << " "})
-        value = (v[:closed] * 100) / v[:total]
-        leaders[v[:name]] = {label: v[:name], value: value}
-      end
-    end
-  rescue Exception => e
-    send_event(debug_widget, {text: debug_console << "Find Leaders Error" << e.message <<  " -> "})
-  else
-    send_event(debug_widget, {text: debug_console << "Find Leaders Done -> " })
-  end
-
-  begin
-    companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
-    12.times do |i|
-      send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
-    end
-    send_event(total_widget, {title: "All Issues Total", open: total[:open], closed: total[:closed], ready: total[:ready], complete: total[:complete]})
-    send_event(leaderboard_widget, { items: leaders.values })
-  rescue Exception => e
-    send_event(debug_widget, {text: debug_console << "Display Error" << e.message << " -> "})
-  else
-      send_event(debug_widget, {text: debug_console << "Display Done -> " })
-  end
-end
+  send_event(debug[0], {text: debug[1] << "StartCycle -> "})
+  login = read_login_info(debug)
+  tickets = get_tickets(login, debug)
+  companies = get_companies(tickets, debug)
+  stream = get_issues(tickets, debug)
+  companies = issues_company_type_sort(stream, debug)
+  leaders = find_leaders(companies, "all_leaderboard", debug)
+  send_issues(count_widgets, leaders, debug)
