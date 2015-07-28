@@ -27,6 +27,7 @@ module Field
       unless debug.nil? then send_event(debug[0], {text: debug[1] << "Unable to get Tickets" << e.message << " -> "})
     else
       unless debug.nil? then send_event(debug[0], {text: debug[1] << "Got Tickets ->"})
+    end
   end
 
   #Performs the REST call to the BIM 360 Field Database to recieve companies.
