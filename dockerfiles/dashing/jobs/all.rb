@@ -7,19 +7,19 @@ require 'json'
   #Reads the file "Login" and gets the corresponding login and project tickets
   #OUT: login[login_ticket, project_ticket]
   def get_tickets ()
-    login = [0, 0, 0]
-    tickets = [0,0]
+    login = {:username => 0 , :password => 0, :project => 0 }
+    tickets = {:login => 0, :project => 0}
     File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
-        login[0] = rf.readline.chomp
-        login[1] = rf.readline.chomp
-        login[2] = rf.readline.chomp
+        login[:username] => rf.readline.chomp
+        login[:password] => rf.readline.chomp
+        login[:project] => rf.readline.chomp
     end
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password}))
-    tickets[0] = stream["ticket"]
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => login_ticket}))
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[username:], :password => login[password:]}))
+    tickets[login:] = stream["ticket"]
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket[project:]}))
     stream.each do |p|
-      if p["name"] == project
-        tickets[1] = p["project_id"]
+      if p["name"] == login[project:]
+        tickets[project:] = p["project_id"]
       end
     end
     return tickets
@@ -29,7 +29,7 @@ require 'json'
   #IN: Tickets from get_tickets
   #OUT: Hash of company hashes sorted by company_id,
   def get_companies (tickets)
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => tickets[0], :project_id => tickets[1]}))
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => tickets[login:], :project_id => tickets[project:]}))
     stream.each do |c|
       companies[:companies][c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
     end
@@ -40,7 +40,7 @@ require 'json'
   #IN: Tickets from get_tickets
   #OUT: Stream of JSON
   def get_issues (tickets)
-      stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => tickets[0], :project_id => tickets[1]}}))
+      stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => tickets[loing:], :project_id => tickets[project:]}}))
   end
 
   #Increments the company issue counts base don type of issues
