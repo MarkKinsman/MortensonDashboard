@@ -14,12 +14,12 @@ require 'json'
         login[:password] = rf.readline.chomp
         login[:project] = rf.readline.chomp
     end
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[username:], :password => login[password:]}))
-    tickets[login:] = stream["ticket"]
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket[project:]}))
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[username:], :password => login[password:] }))
+    tickets[:login] = stream["ticket"]
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket[project:] }))
     stream.each do |p|
       if p["name"] == login[project:]
-        tickets[project:] = p["project_id"]
+        tickets[:project] = p["project_id"]
       end
     end
     return tickets
@@ -40,7 +40,7 @@ require 'json'
   #IN: Tickets from get_tickets
   #OUT: Stream of JSON
   def get_issues (tickets)
-      stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => tickets[loing:], :project_id => tickets[project:]}}))
+      stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => tickets[login:], :project_id => tickets[project:]}}))
   end
 
   #Increments the company issue counts base don type of issues
