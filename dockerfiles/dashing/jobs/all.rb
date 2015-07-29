@@ -29,7 +29,7 @@ require 'json'
   #IN: Tickets from get_tickets
   #OUT: Hash of company hashes sorted by company_id,
   def get_companies (tickets)
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => tickets[login:], :project_id => tickets[project:]}))
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => tickets[:login], :project_id => tickets[:project]}))
     stream.each do |c|
       companies[:companies][c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
     end
@@ -40,7 +40,7 @@ require 'json'
   #IN: Tickets from get_tickets
   #OUT: Stream of JSON
   def get_issues (tickets)
-      stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => tickets[login:], :project_id => tickets[project:]}}))
+      stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => tickets[:login], :project_id => tickets[:project]}}))
   end
 
   #Increments the company issue counts base don type of issues
