@@ -17,7 +17,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   send_event(debug[0], {text: debug[1] << "StartCycle -> "})
 
   begin
-    tickets = get_tickets()
+    tickets = bim360helper.get_tickets()
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Error" << e.message << " -> "}) end
   else
@@ -25,7 +25,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    companies = get_companies(tickets)
+    companies = bim360helper.get_companies(tickets)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Error" << e.message << " -> "}) end
   else
@@ -33,7 +33,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    issues_stream = get_issues(tickets)
+    issues_stream = bim360helper.get_issues(tickets)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" << e.message << " -> "}) end
   else
@@ -41,7 +41,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    companies = issues_company_type_sort(issues_stream)
+    companies = bim360helper.issues_company_type_sort(issues_stream)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" << e.message << " -> "}) end
   else
@@ -49,7 +49,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    send_issue_counts(companies, count_widgets)
+    bim360helper.send_issue_counts(companies, count_widgets)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Error" << e.message << " -> "}) end
   else
@@ -57,7 +57,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    send_leaders(companies, "all_leaderboard")
+    bim360helper.send_leaders(companies, "all_leaderboard")
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Error" << e.message <<  " -> "}) end
   else
