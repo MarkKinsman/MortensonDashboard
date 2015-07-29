@@ -14,11 +14,11 @@ require 'json'
         login[:password] = rf.readline.chomp
         login[:project] = rf.readline.chomp
     end
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[username:], :password => login[password:] }))
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[:username], :password => login[:password] }))
     tickets[:login] = stream["ticket"]
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket[project:] }))
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket[:project] }))
     stream.each do |p|
-      if p["name"] == login[project:]
+      if p["name"] == login[:project]
         tickets[:project] = p["project_id"]
       end
     end
