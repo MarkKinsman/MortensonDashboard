@@ -15,11 +15,11 @@ require 'json'
         login[:project] => rf.readline.chomp
     end
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[username:], :password => login[password:]}))
-    tickets[login:] = stream["ticket"]
+    tickets[login:] => stream["ticket"]
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket[project:]}))
     stream.each do |p|
       if p["name"] == login[project:]
-        tickets[project:] = p["project_id"]
+        tickets[project:] => p["project_id"]
       end
     end
     return tickets
@@ -96,7 +96,6 @@ count_widgets=[['all_total'],['all_company_0','all_company_1','all_company_2','a
 debug = ['all_debug', ""]
 
 #Local Variables
-tickets = [0,0]
 leaders = Hash.new({value: 0})
 companies = {total: {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}, companies: Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})}
 
