@@ -24,11 +24,11 @@ require 'json'
     sleep(10)
 
     tickets[:login] = stream["ticket"]
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => login[:project] }))
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => tickets[:login] }))
 
     send_event("all_debug", {text: stream.inspect})
     sleep(10)
-    
+
     stream.each do |p|
       if p["name"] == login[:project]
         tickets[:project] = p["project_id"]
