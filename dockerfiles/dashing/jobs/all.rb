@@ -7,7 +7,6 @@ count_widgets=[['all_total'],['all_company_0','all_company_1','all_company_2','a
 debug = ['all_debug', ""]
 
 #Local Variables
-login = [0, 0, 0]
 tickets = [0,0]
 leaders = Hash.new({value: 0})
 companies = {total: {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}, companies: Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})}
@@ -16,12 +15,52 @@ companies = {total: {:name => 0, :open => 0, :complete => 0, :ready => 0, :close
 SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
 
   send_event(debug[0], {text: debug[1] << "StartCycle -> "})
-  login = read_login_info(debug)
-  tickets = get_tickets(login, debug)
-  companies = get_companies(tickets, debug)
-  stream = get_issues(tickets, debug)
-  companies = issues_company_type_sort(stream, debug)
-  send_issue_counts(count_widgets, leaders, debug)
-  send_leaders(companies, "all_leaderboard", debug)
 
+  begin
+    tickets = get_tickets()
+  rescue Exception => e
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Error" << e.message << " -> "}) end
+  else
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Done -> "}) end
+  end
+
+  begin
+    companies = get_companies(tickets)
+  rescue Exception => e
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Error" << e.message << " -> "}) end
+  else
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Done -> "}) end
+  end
+
+  begin
+    issues_stream = get_issues(tickets)
+  rescue Exception => e
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" << e.message << " -> "}) end
+  else
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Done -> "}) end
+  end
+
+  begin
+    companies = issues_company_type_sort(issues_stream)
+  rescue Exception => e
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" << e.message << " -> "}) end
+  else
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Done -> " }) end
+  end
+
+  begin
+    send_issue_counts(companies, count_widgets)
+  rescue Exception => e
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Error" << e.message << " -> "}) end
+  else
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Done -> " }) end
+  end
+
+  begin
+    send_leaders(companies, "all_leaderboard")
+  rescue Exception => e
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Error" << e.message <<  " -> "}) end
+  else
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Done -> " }) end
+  end
 end
