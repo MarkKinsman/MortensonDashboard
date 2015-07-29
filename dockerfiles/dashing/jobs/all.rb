@@ -10,16 +10,16 @@ require 'json'
     login = {:username => 0 , :password => 0, :project => 0 }
     tickets = {:login => 0, :project => 0}
     File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
-        login[:username] => rf.readline.chomp
-        login[:password] => rf.readline.chomp
-        login[:project] => rf.readline.chomp
+        login[:username] = rf.readline.chomp
+        login[:password] = rf.readline.chomp
+        login[:project] = rf.readline.chomp
     end
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[username:], :password => login[password:]}))
-    tickets[login:] => stream["ticket"]
+    tickets[login:] = stream["ticket"]
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => ticket[project:]}))
     stream.each do |p|
       if p["name"] == login[project:]
-        tickets[project:] => p["project_id"]
+        tickets[project:] = p["project_id"]
       end
     end
     return tickets
