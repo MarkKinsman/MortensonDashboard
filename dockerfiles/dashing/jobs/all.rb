@@ -15,7 +15,7 @@ require 'json'
         login[:project] = rf.readline.chomp
     end
 
-    send_event(debug[0], {text: login[:username] << " - " << login[:password] << " - " << login[:project]})
+    send_event("all_debug", {text: login[:username] << " - " << login[:password] << " - " << login[:project]})
 
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[:username], :password => login[:password] }))
     tickets[:login] = stream["ticket"]
