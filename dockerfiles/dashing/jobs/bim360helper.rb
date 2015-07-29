@@ -10,9 +10,9 @@ module Field
           login[2] = rf.readline.chomp
       end
     rescue Exception => e
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Open File Error" << e.message << " -> "})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Open File Error" << e.message << " -> "}) end
     else
-      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Open File Done -> "})
+      unless debug.nil? then send_event(debug[0], {text: debug[1] << "Open File Done -> "}) end
     end
     begin
       stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => username, :password => password}))
