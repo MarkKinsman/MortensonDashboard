@@ -23,15 +23,15 @@ require 'json'
     send_event("all_debug", {text: stream["ticket"]})
     sleep(10)
 
-    tickets[login:] = stream["ticket"]
+    tickets[:login] = stream["ticket"]
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => login[:project] }))
 
-    send_event("all_debug", {text: JSON.parse(stream)})
+    send_event("all_debug", {text: stream.inspect})
     sleep(10)
     
     stream.each do |p|
       if p["name"] == login[:project]
-        tickets[project:] = p["project_id"]
+        tickets[:project] = p["project_id"]
       end
     end
 
