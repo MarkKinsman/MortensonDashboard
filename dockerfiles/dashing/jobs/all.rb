@@ -7,7 +7,8 @@ require 'json'
   #Reads the file "Login" and gets the corresponding login and project tickets
   #OUT: login[login_ticket, project_ticket]
   def get_tickets ()
-    login = {:username => 0 , :password => 0, :project => 0 }
+    #login = {:username => 0 , :password => 0, :project => 0 }
+    login = [0,0,0]
     tickets = {:login => 0, :project => 0}
     File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
         login[:username] = rf.readline.chomp
@@ -15,10 +16,10 @@ require 'json'
         login[:project] = rf.readline.chomp
     end
 
-    send_event("all_debug", {text: login[:username] << " - " << login[:password] << " - " << login[:project]})
+    send_event("all_debug", {text: login[0] << " - " << login[1] << " - " << login[2]})
     sleep(10)
 
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[:username], :password => login[:password] }))
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[0], :password => login[1] }))
 
     send_event("all_debug", {text: stream["ticket"]})
     sleep(10)
