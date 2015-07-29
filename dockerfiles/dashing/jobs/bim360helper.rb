@@ -16,6 +16,7 @@ module Field
       if p["name"] == project
         tickets[1] = p["project_id"]
       end
+    end
     return tickets
   end
 
