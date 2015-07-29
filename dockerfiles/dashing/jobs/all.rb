@@ -7,7 +7,7 @@ require 'json'
   #Reads the file "Login" and gets the corresponding login and project tickets
   #OUT: login[login_ticket, project_ticket]
   def get_tickets ()
-    login = {:username => 0, :password => 0, :project => 0 }
+    login = {:username => 0 , :password => 0, :project => 0 }
     tickets = {:login => 0, :project => 0}
     File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
         login[:username] = rf.readline.chomp
@@ -105,7 +105,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   begin
     tickets = get_tickets()
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Error" << tickets << e.message << " -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Error" << e.message << " -> "}) end
   else
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Done -> "}) end
   end
