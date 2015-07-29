@@ -23,3 +23,5 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   companies = issues_company_type_sort(stream, debug)
   send_issue_counts(count_widgets, leaders, debug)
   send_leaders(companies, "all_leaderboard", debug)
+
+end
