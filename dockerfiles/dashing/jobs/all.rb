@@ -3,7 +3,7 @@ require 'json'
 #require_relative 'bim360helper'
 
 #Methods
-module Field
+#module Field
   #Reads the file "Login" and gets the corresponding login and project tickets
   #OUT: login[login_ticket, project_ticket]
   def get_tickets ()
@@ -89,8 +89,7 @@ module Field
     end
     send_event(leaderboard_widget, { items: leaders.values })
   end
-
-end
+#end
 
 #Widgets
 count_widgets=[['all_total'],['all_company_0','all_company_1','all_company_2','all_company_3','all_company_4','all_company_5','all_company_6','all_company_7','all_company_8','all_company_9','all_company_10','all_company_11']]
@@ -107,7 +106,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   send_event(debug[0], {text: debug[1] << "StartCycle -> "})
 
   begin
-    tickets = Field.get_tickets()
+    tickets = get_tickets()
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Error" << e.message << " -> "}) end
   else
@@ -115,7 +114,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    companies = Field.get_companies(tickets)
+    companies = get_companies(tickets)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Error" << e.message << " -> "}) end
   else
@@ -123,7 +122,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    issues_stream = Field.get_issues(tickets)
+    issues_stream = get_issues(tickets)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" << e.message << " -> "}) end
   else
@@ -131,7 +130,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    companies = Field.issues_company_type_sort(issues_stream)
+    companies = issues_company_type_sort(issues_stream)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" << e.message << " -> "}) end
   else
@@ -139,7 +138,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    Field.send_issue_counts(companies, count_widgets)
+    send_issue_counts(companies, count_widgets)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Error" << e.message << " -> "}) end
   else
@@ -147,7 +146,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    Field.send_leaders(companies, "all_leaderboard")
+    send_leaders(companies, "all_leaderboard")
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Error" << e.message <<  " -> "}) end
   else
