@@ -18,7 +18,7 @@ require 'json'
     send_event("all_debug", {text: login[:username] << " - " << login[:password] << " - " << login[:project]})
     sleep(10)
 
-    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[:username].to_s , :password => login[:password].to_s }))
+    stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => "marc.kinsman@mortenson.com" , :password => 'Kerlwg08' }))
 
     send_event("all_debug", {text: stream["ticket"]})
     sleep(10)
@@ -30,7 +30,7 @@ require 'json'
     sleep(10)
 
     stream.each do |p|
-      if p["name"] == login[:project]
+      if p["name"] == "UWMC Expansion Phase II"
         tickets[:project] = p["project_id"]
       end
     end
