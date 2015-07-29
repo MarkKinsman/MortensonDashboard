@@ -20,9 +20,9 @@ require 'json'
 
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => "marc.kinsman@mortenson.com", :password => "Kerlwg08" }))
 
-    send_event("all_debug", {text: stream})
+    send_event("all_debug", {text: stream["ticket"]})
     sleep(15)
-    
+
     tickets[:login] = stream["ticket"]
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/projects", :params => {:ticket => "UWMC Expansion Phase II" }))
     stream.each do |p|
