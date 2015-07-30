@@ -47,7 +47,7 @@ module Field
   #IN: Companies Hash, JSON Stream of issues
   #OUT: Hash of company hashes sorted by company_id with counted issues
   def self.company_issue_count (companies, issues)
-    total = {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
+    total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
     issues.each do |i|
       case i["status"]
         when "Open"
@@ -74,7 +74,7 @@ module Field
   def self.send_issue_counts (companies, widgets, total=nil)
     companies_array = companies.sort_by { |k, v| v[:open] }
     unless total == nil
-      companies_array.unshift(total)
+      companies_array.unshift([0, total])
     end
 
     send_event("all_debug", {text: companies_array.inspect })
