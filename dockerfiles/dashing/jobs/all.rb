@@ -3,10 +3,10 @@ require 'json'
 #require_relative 'bim360helper'
 
 #Methods
-#module Field
+module Field
   #Reads the file "Login" and gets the corresponding login and project tickets
   #OUT: login[login_ticket, project_ticket]
-  def get_tickets ()
+  def self.get_tickets ()
     login = {:username => 0 , :password => 0, :project => 0 }
     tickets = {:login => 0, :project => 0}
     File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
@@ -38,7 +38,7 @@ require 'json'
   #Performs the REST call to the BIM 360 Field Database to recieve companies.
   #IN: Tickets from get_tickets
   #OUT: Hash of company hashes sorted by company_id,
-  def get_companies (tickets)
+  def self.get_companies (tickets)
     companies = {total: {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}, companies: Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})}
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => tickets[:login], :project_id => tickets[:project]}))
     stream.each do |c|
@@ -50,14 +50,14 @@ require 'json'
   #Performs the REST call to the BIM 360 Field Database to recieve issues.
   #IN: Tickets from get_tickets
   #OUT: Stream of JSON
-  def get_issues (tickets)
+  def self.get_issues (tickets)
       return JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => tickets[:login], :project_id => tickets[:project]}}))
   end
 
   #Increments the company issue counts base don type of issues
   #IN: Companies Hash, JSON Stream of issues
   #OUT: Hash of company hashes sorted by company_id with counted issues
-  def issues_company_type_sort (companies, issues)
+  def self.issues_company_type_sort (companies, issues)
     issues.each do |i|
         case i["status"]
           when "Open"
@@ -81,7 +81,7 @@ require 'json'
 
   #Orders companies based on open issues and dislpays the ones with the most in the widgets
   #IN: Companies hash, Array of text names for widgets
-  def send_issue_counts (companies, widgets)
+  def self.send_issue_counts (companies, widgets)
     companies_array = companies[:companies].sort_by { |k, v| v[:open] }.reverse!
     12.times do |i|
       send_event(widgets[1][i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
@@ -91,7 +91,7 @@ require 'json'
 
   #Calculates the %Complete for companies and displays them in the leaderboard
   #IN: Companies hash, Text name of leaderboard widget
-  def send_leaders (companies, leaderboard_widget)
+  def self.send_leaders (companies, leaderboard_widget)
     leaders = Hash.new({value: 0})
     companies[:companies].each do |k, v|
       if v[:total] != 0
@@ -101,10 +101,9 @@ require 'json'
     end
     send_event(leaderboard_widget, { items: leaders.values })
   end
-#end
+end
 
 tickets = {:login => 0, :project => 0}
-
 #Widgets
 count_widgets=[['all_total'],['all_company_0','all_company_1','all_company_2','all_company_3','all_company_4','all_company_5','all_company_6','all_company_7','all_company_8','all_company_9','all_company_10','all_company_11']]
 debug = ['all_debug', ""]
@@ -115,7 +114,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   send_event(debug[0], {text: debug[1] << "StartCycle -> "})
 
   begin
-    tickets = get_tickets()
+    tickets = Field.get_tickets()
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Error" + e.message + " -> "}) end
   else
@@ -123,7 +122,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    companies = get_companies(tickets)
+    companies = Field.get_companies(tickets)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Error" + e.message + " -> "}) end
   else
@@ -131,7 +130,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    issues_stream = get_issues(tickets)
+    issues_stream = Field.get_issues(tickets)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" + e.message + " -> "}) end
   else
@@ -139,7 +138,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    companies = issues_company_type_sort(companies, issues_stream)
+    companies = Field.issues_company_type_sort(companies, issues_stream)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" + e.message + " -> "}) end
   else
@@ -147,7 +146,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    send_issue_counts(companies, count_widgets)
+    Field.send_issue_counts(companies, count_widgets)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Error" + e.message + " -> "}) end
   else
@@ -155,7 +154,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    send_leaders(companies, "all_leaderboard")
+    Field.send_leaders(companies, "all_leaderboard")
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Error" + e.message +  " -> "}) end
   else
