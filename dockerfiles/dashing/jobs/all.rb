@@ -28,7 +28,9 @@ require 'json'
 
     stream.each do |p|
       if p["name"] == login[:project]
-        tickets[:project] = p["project_id"]
+        #tickets[:project] = p["project_id"]
+        send_event("all_debug", {text: p["project_id"]})
+        sleep(10)
       end
     end
 
