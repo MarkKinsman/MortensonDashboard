@@ -73,7 +73,7 @@ module Field
   #Orders companies based on open issues and dislpays the ones with the most in the widgets
   #IN: Companies hash, Array of text names for widgets
   def self.send_issue_counts (companies, widgets, total=nil)
-    companies_array = companies[:companies].sort_by { |k, v| v[:open] }.reverse!
+    companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
     if total != nil
       companies_array.unshift(total)
     end
