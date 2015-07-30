@@ -35,7 +35,7 @@ module Field
     end
 
     send_event("all_debug", {text: companies.keys})
-    wait(10)
+    sleep(10)
 
     return companies
   end
