@@ -31,7 +31,7 @@ module Field
     companies = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => tickets[:login], :project_id => tickets[:project]}))
     stream.each do |c|
-      companies[:companies][c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
+      companies[c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
     end
 
     send_event("all_debug", {text: companies.keys})
