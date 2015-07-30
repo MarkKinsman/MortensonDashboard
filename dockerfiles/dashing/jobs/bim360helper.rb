@@ -33,10 +33,6 @@ module Field
     stream.each do |c|
       companies[c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
     end
-
-    send_event("all_debug", {text: companies.keys})
-    sleep(10)
-
     return companies
   end
 
@@ -50,7 +46,7 @@ module Field
   #Increments the company issue counts base don type of issues
   #IN: Companies Hash, JSON Stream of issues
   #OUT: Hash of company hashes sorted by company_id with counted issues
-  def self.issues_company_type_count (companies, issues)
+  def self.company_issue_count (companies, issues)
     total = {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
     issues.each do |i|
       case i["status"]
@@ -76,6 +72,9 @@ module Field
   #Orders companies based on open issues and dislpays the ones with the most in the widgets
   #IN: Companies hash, Array of text names for widgets
   def self.send_issue_counts (companies, widgets, total=nil)
+    send_event("all_debug", {text: companies.inspect })
+    sleep(10)
+
     companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
 
     send_event("all_debug", {text: companies_array.inspect })

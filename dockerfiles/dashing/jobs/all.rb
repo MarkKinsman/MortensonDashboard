@@ -16,7 +16,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Error" + e.message + " -> "}) end
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Done #{tickets.values} -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Done -> "}) end
   end
 
   begin
@@ -24,7 +24,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Error" + e.message + " -> "}) end
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Done #{companies.keys}-> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Done -> "}) end
   end
 
   begin
@@ -36,11 +36,11 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    companies,total = Field.issues_company_type_count(companies, issues_stream)
+    companies,total = Field.company_issue_count(companies, issues_stream)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" + e.message + " -> "}) end
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Done #{companies.keys}-> " }) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Done -> " }) end
   end
 
   begin
