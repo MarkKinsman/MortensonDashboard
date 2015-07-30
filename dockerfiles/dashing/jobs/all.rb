@@ -40,7 +40,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" + e.message + " -> "}) end
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Done -> " }) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Done -> #{companies.keys} #{total.keys}" }) end
   end
 
   begin
