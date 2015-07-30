@@ -74,11 +74,11 @@ module Field
   def self.send_issue_counts (companies, widgets, total=nil)
     companies_array = companies.sort_by { |k, v| v[:open] }
     unless total == nil
-      companies_array.unshift([0, total])
+      companies_array.unshift(total)
     end
 
     send_event("all_debug", {text: companies_array.inspect })
-    sleep(30)
+    sleep(200)
 
     widgets.length.times do |i|
       send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
