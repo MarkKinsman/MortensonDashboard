@@ -29,7 +29,7 @@ module Field
   #IN: Tickets from get_tickets
   #OUT: Hash of company hashes sorted by company_id,
   def self.get_companies (tickets)
-    companies = {total: {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}, companies: Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})}
+    companies = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => tickets[:login], :project_id => tickets[:project]}))
     stream.each do |c|
       companies[:companies][c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
@@ -47,36 +47,39 @@ module Field
   #Increments the company issue counts base don type of issues
   #IN: Companies Hash, JSON Stream of issues
   #OUT: Hash of company hashes sorted by company_id with counted issues
-  def self.issues_company_type_sort (companies, issues)
+  def self.issues_company_type_count (companies, issues)
+    total = {:name => 0, :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
     issues.each do |i|
-        case i["status"]
-          when "Open"
-            companies[i[:companies]["company_id"]][:open] += 1
-            companies[:total][:open] += 1
-          when "Work Completed"
-            companies[i[:companies]["company_id"]][:complete] += 1
-            companies[:total][:complete] += 1
-          when "Ready to Inspect"
-            companies[i[:companies]["company_id"]][:ready] += 1
-            companies[:total][:ready] += 1
-          when "Closed"
-            companies[i[:companies]["company_id"]][:closed] += 1
-            companies[:total][:closed] += 1
-        end
-        companies[i[:companies]["company_id"]][:total] += 1
-        companies[:total][:total] += 1
+      case i["status"]
+        when "Open"
+          companies[i["company_id"]][:open] += 1
+          total[:open] += 1
+        when "Work Completed"
+          companies[i["company_id"]][:complete] += 1
+          total[:complete] += 1
+        when "Ready to Inspect"
+          companies[i["company_id"]][:ready] += 1
+          total[:ready] += 1
+        when "Closed"
+          companies[i["company_id"]][:closed] += 1
+          total[:closed] += 1
+      end
+      companies[i["company_id"]][:total] += 1
+      total[:total] += 1
     end
-    return companies
+    return companies, total
   end
 
   #Orders companies based on open issues and dislpays the ones with the most in the widgets
   #IN: Companies hash, Array of text names for widgets
-  def self.send_issue_counts (companies, widgets)
+  def self.send_issue_counts (companies, widgets, total=nil)
     companies_array = companies[:companies].sort_by { |k, v| v[:open] }.reverse!
-    12.times do |i|
-      send_event(widgets[1][i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
+    if total != nil
+      companies_array.unshift(total)
     end
-    send_event(widgets[1][0], {title: "All Issues Total", open: companies[:total][:open], closed: companies[:total][:closed], ready: companies[:total][:ready], complete: companies[:total][:complete]})
+    widgets.length.times do |i|
+      send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
+    end
   end
 
   #Calculates the %Complete for companies and displays them in the leaderboard
