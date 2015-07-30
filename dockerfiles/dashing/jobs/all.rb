@@ -27,7 +27,7 @@ require 'json'
     sleep(10)
 
     stream.each do |p|
-      if p["name"] == "UWMC Expansion Phase II"
+      if p["name"] == login[:project]
         tickets[:project] = p["project_id"]
       end
     end
