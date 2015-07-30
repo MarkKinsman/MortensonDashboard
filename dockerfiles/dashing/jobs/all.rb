@@ -15,8 +15,8 @@ require 'json'
         login[:project] = 'UWMC Expansion Phase II' #rf.readline.chomp
     end
 
-    send_event("all_debug", {text: login[:username] << " - " << login[:password] << " - " << login[:project]})
-    sleep(10)
+    #send_event("all_debug", {text: login[:username] << " - " << login[:password] << " - " << login[:project]})
+    #sleep(10)
 
     request = "http://bim360field.autodesk.com/api/login?username=" << login[:username] << "&password=" << login[:password]
 
