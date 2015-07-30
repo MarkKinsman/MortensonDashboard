@@ -2,8 +2,6 @@ require 'rest-client'
 require 'json'
 require_relative 'bim360helper'
 
-tickets = {:login => 0, :project => 0}
-
 #Widgets
 count_widgets=['all_total', 'all_company_0','all_company_1','all_company_2','all_company_3','all_company_4','all_company_5','all_company_6','all_company_7','all_company_8','all_company_9','all_company_10','all_company_11']
 debug = ['all_debug', ""]
