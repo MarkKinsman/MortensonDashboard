@@ -74,7 +74,7 @@ module Field
   #IN: Companies hash, Array of text names for widgets
   def self.send_issue_counts (companies, widgets, total=nil)
     companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
-    if total != nil
+    unless total == nil
       companies_array.unshift(total)
     end
     widgets.length.times do |i|
@@ -86,7 +86,7 @@ module Field
   #IN: Companies hash, Text name of leaderboard widget
   def self.send_leaders (companies, leaderboard_widget)
     leaders = Hash.new({value: 0})
-    companies[:companies].each do |k, v|
+    companies.each do |k, v|
       if v[:total] != 0
         value = (v[:closed] * 100) / v[:total]
         leaders[v[:name]] = {label: v[:name], value: value}

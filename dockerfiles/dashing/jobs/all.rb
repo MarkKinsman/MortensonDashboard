@@ -46,7 +46,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    Field.send_issue_counts(companies, count_widgets)
+    Field.send_issue_counts(companies, count_widgets, total)
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Error" + e.message + " -> "}) end
   else
