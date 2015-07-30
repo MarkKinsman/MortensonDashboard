@@ -21,7 +21,6 @@ module Field
         tickets[:project] = p["project_id"]
       end
     end
-
     return tickets
   end
 
@@ -76,17 +75,17 @@ module Field
     companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
 
     send_event("all_debug", {text: companies_array.inspect })
-    wait(10)
+    sleep(10)
 
     unless total == nil
       send_event("all_debug", {text: "Total not nil!: " + total.inspect })
-      wait(10)
+      sleep(10)
 
       companies_array.unshift(total)
     end
 
     send_event("all_debug", {text: "Sending Widgets" })
-    wait(10)
+    sleep(10)
 
     widgets.length.times do |i|
       send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
