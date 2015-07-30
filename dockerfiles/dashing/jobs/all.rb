@@ -29,13 +29,8 @@ require 'json'
     stream.each do |p|
       if p["name"] == login[:project]
         tickets[:project] = p["project_id"]
-        #send_event("all_debug", {text: p["project_id"]})
-        #sleep(10)
       end
     end
-
-    #send_event("all_debug", {text: JSON.parse(stream)})
-    #sleep(10)
 
     return tickets
   end
@@ -122,39 +117,39 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   begin
     tickets = get_tickets()
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Error" << e.message << " -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Error" + e.message + " -> "}) end
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Done -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Done #{tickets.values} -> "}) end
   end
 
   begin
     companies = get_companies(tickets)
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Error" << e.message << " -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Error" + e.message + " -> "}) end
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Done -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Done #{companies.values}-> "}) end
   end
 
   begin
     issues_stream = get_issues(tickets)
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" << e.message << " -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" + e.message + " -> "}) end
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Done -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Done #{issues_stream.values}-> "}) end
   end
 
   begin
     companies = issues_company_type_sort(companies, issues_stream)
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" << e.message << " -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" + e.message + " -> "}) end
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Done -> " }) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Done #{companies.values}-> " }) end
   end
 
   begin
     send_issue_counts(companies, count_widgets)
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Error" << e.message << " -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Error" + e.message + " -> "}) end
   else
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Done -> " }) end
   end
@@ -162,7 +157,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   begin
     send_leaders(companies, "all_leaderboard")
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Error" << e.message <<  " -> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Error" + e.message +  " -> "}) end
   else
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Done -> " }) end
   end
