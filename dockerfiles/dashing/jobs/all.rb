@@ -34,7 +34,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" + e.message + " -> "}) end
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Done #{issues_stream.inspect}-> "}) end
+    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Done -> "}) end
   end
 
   begin
