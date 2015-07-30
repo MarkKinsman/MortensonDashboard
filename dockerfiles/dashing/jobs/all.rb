@@ -10,9 +10,9 @@ require 'json'
     login = {:username => 0 , :password => 0, :project => 0 }
     tickets = {:login => 0, :project => 0}
     File.open(File.expand_path("../login", __FILE__ ), "r") do |rf|
-        login[:username] = 'marc.kinsman@mortenson.com' #rf.readline.chomp
-        login[:password] = 'Kerlwg08' #rf.readline.chomp
-        login[:project] = 'UWMC Expansion Phase II' #rf.readline.chomp
+        login[:username] = rf.readline.chomp
+        login[:password] = rf.readline.chomp
+        login[:project] = rf.readline.chomp
     end
 
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/login", :params => {:username => login[:username], :password => login[:password]}))
