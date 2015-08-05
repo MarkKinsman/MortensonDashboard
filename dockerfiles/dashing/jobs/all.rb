@@ -27,16 +27,20 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Done -> "}) end
   end
 
-  begin
-    issues_stream = Field.get_issues(tickets)
-  rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" + e.message + " -> "}) end
-  else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Done -> "}) end
-  end
+#  begin
+#    issues_stream = Field.get_issues(tickets)
+#  rescue Exception => e
+#    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" + e.message + " -> "}) end
+#  else
+#    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Done -> "}) end
+#  end
 
   begin
-    companies,total = Field.company_issue_count(companies, issues_stream)
+    total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
+    (get_issues_count/20).times do |i|
+      companies,total = Field.company_issue_count(companies, get_issues(tickets, 20, i), total)
+    end
+
   rescue Exception => e
     unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" + e.message + " -> "}) end
   else
