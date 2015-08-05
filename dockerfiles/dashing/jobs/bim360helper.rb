@@ -45,9 +45,9 @@ module Field
 
   #Performs the REST call to the BIM 360 Field Database to recieve number of issues.
   #IN: Tickets from get_tickets
-  #OUT: Number of issues in JSON
+  #OUT: Number of issues
   def self.get_issues_count (tickets)
-      return JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues", timeout: nil, headers: {:params => {:ticket => tickets[:login], :project_id => tickets[:project], :count_only => "true"}}))
+      return JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues", timeout: nil, headers: {:params => {:ticket => tickets[:login], :project_id => tickets[:project], :count_only => "true"}}))["count"]
   end
 
   #Increments the company issue counts based on type of issues

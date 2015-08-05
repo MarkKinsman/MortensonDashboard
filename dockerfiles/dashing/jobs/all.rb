@@ -37,7 +37,10 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
     send_event(debug[0], {text: debug[1] << " Declared Variable "})
 
     issues_count = Field.get_issues_count(tickets)
-    (issues_count / 20).times do |i|
+
+    send_event(debug[0], {text: debug[1] << issues_count})
+
+    (issues_count/20).times do |i|
       send_event(debug[0], {text: debug[1] << " In loop "})
       stream = Field.get_issues(tickets, 20, i)
 
