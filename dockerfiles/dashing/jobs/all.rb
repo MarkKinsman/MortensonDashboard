@@ -22,7 +22,8 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    companies = Field.get_companies(tickets)
+    all_companies = Field.get_companies(tickets)
+    punch_companies = all_companies
   rescue Exception => e
     send_event(debug[0], {text: debug[1] << "Companies Download Error" + e.message + " -> "})
   else
@@ -32,14 +33,14 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   begin
     all_total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
     punch_total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
-    (get_issues_count/20).times do |i|
-      stream = get_issues(tickets, 20, i)
+    (Field.get_issues_count/20).times do |i|
+      stream = Field.get_issues(tickets, 20, i)
       all_companies, all_total = Field.company_issue_count(all_companies, stream, all_total)
 
       punch_stream = stream.reject{|_, v| v["issue_type"].include? "Punch List"}
       punch_companies, punch_total = Field.company_issue_count(punch_companies, punch_stream, punch_total)
 
-      send_event(debug[0], {text: debug[1] << ((get_issues_count/20)-i) })
+      send_event(debug[0], {text: debug[1] << ((Field.get_issues_count/20)-i) })
     end
   rescue Exception => e
     send_event(debug[0], {text: debug[1] << "Count Issues Error" + e.message + " -> "})
