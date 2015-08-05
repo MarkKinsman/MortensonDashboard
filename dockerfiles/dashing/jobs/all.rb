@@ -33,7 +33,8 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   begin
     all_total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
     punch_total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
-    (Field.get_issues_count(tickets)/20).times do |i|
+    issues_count = Field.get_issues_count(tickets)
+    (issues_count / 20).times do |i|
       stream = Field.get_issues(tickets, 20, i)
       all_companies, all_total = Field.company_issue_count(all_companies, stream, all_total)
 
