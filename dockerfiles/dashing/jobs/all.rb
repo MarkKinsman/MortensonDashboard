@@ -36,8 +36,8 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
 
     issues_count = Field.get_issues_count(tickets)
     iterator = 0
-    issues_count.times do |i|
-      stream = Field.get_issues(tickets, 1, i)
+    (issues_count/100).times do |i|
+      stream = Field.get_issues(tickets, 100, i)
 #      punch_stream = stream.select { |k,v| k.has_key?("issue_type") && k["issue_type"].include?("Punch List")}
       all_companies, all_total = Field.company_issue_count(all_companies, stream, all_total)
 #      punch_companies, punch_total = Field.company_issue_count(punch_companies, punch_stream, punch_total)
