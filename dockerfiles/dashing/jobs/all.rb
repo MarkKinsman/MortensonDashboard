@@ -4,7 +4,7 @@ require_relative 'bim360helper'
 
 #Widgets
 all_count_widgets=['all_total', 'all_company_0','all_company_1','all_company_2','all_company_3','all_company_4','all_company_5','all_company_6','all_company_7','all_company_8','all_company_9','all_company_10','all_company_11']
-punch_count_widgets=['company_0','company_1','company_2','company_3','company_4','company_5','company_6','company_7','company_8','company_9','company_10','company_11']
+punch_count_widgets=['total', 'company_0','company_1','company_2','company_3','company_4','company_5','company_6','company_7','company_8','company_9','company_10','company_11']
 
 debug = ['all_debug', ""]
 
@@ -23,7 +23,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
 
   begin
     all_companies = Field.get_companies(tickets)
-    punch_companies = all_companies
+    punch_companies = Field.get_companies(tickets)
   rescue Exception => e
     send_event(debug[0], {text: debug[1] << "Companies Download Error" + e.message + " -> "})
   else
@@ -37,26 +37,15 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
     send_event(debug[0], {text: debug[1] << " Declared Variable "})
 
     issues_count = Field.get_issues_count(tickets)
-
+    iterator = 0
     send_event(debug[0], {text: debug[1] << issues_count.inspect})
 
     (issues_count/20).times do |i|
-      #send_event(debug[0], {text: debug[1] << " In loop "})
       stream = Field.get_issues(tickets, 20, i)
-
-      #send_event(debug[0], {text: debug[1] << stream.inspect })
-
+      punch_stream = stream.select{ |k| k.has_key?("issue_type") && k["issue_type"].include? "Punch List"}
       all_companies, all_total = Field.company_issue_count(all_companies, stream, all_total)
-
-      #send_event(debug[0], {text: debug[1] << " Counted Issues "})
-
-      punch_stream = stream.reject{|k, v| not k.has_key?("issue_type") or k["issue_type"].include? "Punch List"}
-
-      #send_event(debug[0], {text: debug[1] << punch_stream.inspect})
-
       punch_companies, punch_total = Field.company_issue_count(punch_companies, punch_stream, punch_total)
-
-      send_event(debug[0], {text: debug[1] << " " << i << " "})
+      send_event(debug[0], {text: debug[1] << (100*iterator)/(issues_count/20)})
     end
   rescue Exception => e
     send_event(debug[0], {text: debug[1] << "Count Issues Error" + e.message + " -> "})
