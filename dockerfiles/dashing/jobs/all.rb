@@ -50,7 +50,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
 
       send_event(debug[0], {text: debug[1] << " Counted Issues "})
 
-      punch_stream = stream.reject{|k, v| k["issue_type"].include? "Punch List"}
+      punch_stream = stream.reject{|k, v| not k.has_key?("issue_type") or k["issue_type"].include? "Punch List"}
 
       send_event(debug[0], {text: debug[1] << punch_stream.inspect})
 
