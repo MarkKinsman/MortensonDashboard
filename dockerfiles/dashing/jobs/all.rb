@@ -41,18 +41,18 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
     send_event(debug[0], {text: debug[1] << issues_count.inspect})
 
     (issues_count/20).times do |i|
-      send_event(debug[0], {text: debug[1] << " In loop "})
+      #send_event(debug[0], {text: debug[1] << " In loop "})
       stream = Field.get_issues(tickets, 20, i)
 
-      send_event(debug[0], {text: debug[1] << stream.inspect })
+      #send_event(debug[0], {text: debug[1] << stream.inspect })
 
       all_companies, all_total = Field.company_issue_count(all_companies, stream, all_total)
 
-      send_event(debug[0], {text: debug[1] << " Counted Issues "})
+      #send_event(debug[0], {text: debug[1] << " Counted Issues "})
 
       punch_stream = stream.reject{|k, v| not k.has_key?("issue_type") or k["issue_type"].include? "Punch List"}
 
-      send_event(debug[0], {text: debug[1] << punch_stream.inspect})
+      #send_event(debug[0], {text: debug[1] << punch_stream.inspect})
 
       punch_companies, punch_total = Field.company_issue_count(punch_companies, punch_stream, punch_total)
 
