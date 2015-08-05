@@ -3,7 +3,9 @@ require 'json'
 require_relative 'bim360helper'
 
 #Widgets
-count_widgets=['all_total', 'all_company_0','all_company_1','all_company_2','all_company_3','all_company_4','all_company_5','all_company_6','all_company_7','all_company_8','all_company_9','all_company_10','all_company_11']
+all_count_widgets=['all_total', 'all_company_0','all_company_1','all_company_2','all_company_3','all_company_4','all_company_5','all_company_6','all_company_7','all_company_8','all_company_9','all_company_10','all_company_11']
+punch_count_widgets=['company_0','company_1','company_2','company_3','company_4','company_5','company_6','company_7','company_8','company_9','company_10','company_11']
+
 debug = ['all_debug', ""]
 
 # :first_in sets how long it takes before the job is first run. In this case, it is run immediately
@@ -14,52 +16,52 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   begin
     tickets = Field.get_tickets()
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Error" + e.message + " -> "}) end
+    send_event(debug[0], {text: debug[1] << "Get Tickets Error" + e.message + " -> "})
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Get Tickets Done -> "}) end
+    send_event(debug[0], {text: debug[1] << "Get Tickets Done -> "})
   end
 
   begin
     companies = Field.get_companies(tickets)
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Error" + e.message + " -> "}) end
+    send_event(debug[0], {text: debug[1] << "Companies Download Error" + e.message + " -> "})
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Companies Download Done -> "}) end
+    send_event(debug[0], {text: debug[1] << "Companies Download Done -> "})
   end
 
-#  begin
-#    issues_stream = Field.get_issues(tickets)
-#  rescue Exception => e
-#    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Error" + e.message + " -> "}) end
-#  else
-#    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Issues Download Done -> "}) end
-#  end
-
   begin
-    total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
+    all_total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
+    punch_total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
     (get_issues_count/20).times do |i|
-      companies,total = Field.company_issue_count(companies, get_issues(tickets, 20, i), total)
+      stream = get_issues(tickets, 20, i)
+      all_companies, all_total = Field.company_issue_count(all_companies, stream, all_total)
+
+      punch_stream = stream.reject{|_, v| v["issue_type"].include? "Punch List"}
+      punch_companies, punch_total = Field.company_issue_count(punch_companies, punch_stream, punch_total)
+
+      send_event(debug[0], {text: debug[1] << ((get_issues_count/20)-i) })
     end
-
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Error" + e.message + " -> "}) end
+    send_event(debug[0], {text: debug[1] << "Count Issues Error" + e.message + " -> "})
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Count Issues Done -> #{companies.keys} #{total.keys}" }) end
+    send_event(debug[0], {text: debug[1] << "Count Issues Done ->" })
   end
 
   begin
-    Field.send_issue_counts(companies, count_widgets, total)
+    Field.send_issue_counts(all_companies, all_count_widgets, all_total)
+    Field.send_issue_counts(punch_companies, punch_count_widgets, punch_total)
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Error" + e.message + " -> "}) end
+    send_event(debug[0], {text: debug[1] << "Display Error" + e.message + " -> "})
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Display Done -> " }) end
+    send_event(debug[0], {text: debug[1] << "Display Done -> " })
   end
 
   begin
-    Field.send_leaders(companies, "all_leaderboard")
+    Field.send_leaders(all_companies, "all_leaderboard")
+    Field.send_leaders(punch_companies, "leaderboard")
   rescue Exception => e
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Error" + e.message +  " -> "}) end
+    send_event(debug[0], {text: debug[1] << "Find Leaders Error" + e.message +  " -> "})
   else
-    unless debug.nil? then send_event(debug[0], {text: debug[1] << "Find Leaders Done -> " }) end
+    send_event(debug[0], {text: debug[1] << "Find Leaders Done -> " })
   end
 end
