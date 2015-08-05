@@ -55,22 +55,24 @@ module Field
   #OUT: Hash of company hashes sorted by company_id with counted issues
   def self.company_issue_count (companies, issues, total=nil)
     issues.each do |i|
-      case i["status"]
-        when "Open"
-          companies[i["company_id"]][:open] += 1
-          if total != nil then total[:open] += 1 end
-        when "Work Completed"
-          companies[i["company_id"]][:complete] += 1
-          if total != nil then total[:complete] += 1 end
-        when "Ready to Inspect"
-          companies[i["company_id"]][:ready] += 1
-          if total != nil then total[:ready] += 1 end
-        when "Closed"
-          companies[i["company_id"]][:closed] += 1
-          if total != nil then total[:closed] += 1 end
+      if i.has_key?("status") && i.has_key?("company_id") then
+        case i["status"]
+          when "Open"
+            companies[i["company_id"]][:open] += 1
+            if total != nil then total[:open] += 1 end
+          when "Work Completed"
+            companies[i["company_id"]][:complete] += 1
+            if total != nil then total[:complete] += 1 end
+          when "Ready to Inspect"
+            companies[i["company_id"]][:ready] += 1
+            if total != nil then total[:ready] += 1 end
+          when "Closed"
+            companies[i["company_id"]][:closed] += 1
+            if total != nil then total[:closed] += 1 end
+        end
+        companies[i["company_id"]][:total] += 1
+        if total != nil then total[:total] += 1 end
       end
-      companies[i["company_id"]][:total] += 1
-      if total != nil then total[:total] += 1 end
     end
     if total != nil then return companies, total else return companies end
   end
