@@ -55,7 +55,7 @@ module Field
   #OUT: Hash of company hashes sorted by company_id with counted issues
   def self.company_issue_count (companies, issues, total=nil)
     issues.each do |i|
-      if i.has_key?("status") && i.has_key?("company_id") then
+      if i["status"] != nil && i["company_id"] != nil then
         case i["status"]
           when "Open"
             companies[i["company_id"]][:open] += 1
