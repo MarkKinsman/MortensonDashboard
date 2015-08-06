@@ -32,7 +32,7 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
 
   begin
     all_total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
-    punch_total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
+    punch_total = {:name => "Punchlist Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
 
     issues_count = Field.get_issues_count(tickets)
     iterator = 0
