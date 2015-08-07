@@ -39,34 +39,42 @@ module Field
   #Performs the REST call to the BIM 360 Field Database to recieve issues.
   #IN: Tickets from get_tickets
   #OUT: Stream of JSON
-  def self.get_issues (tickets)
-      return JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues/", timeout: nil, headers: {:params => {:ticket => tickets[:login], :project_id => tickets[:project]}}))
+  def self.get_issues (tickets, limit=-1, offset=0)
+      return JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues", timeout: nil, headers: {:params => {:ticket => tickets[:login], :project_id => tickets[:project], :limit => limit, :offset => offset}}))
   end
 
-  #Increments the company issue counts base don type of issues
+  #Performs the REST call to the BIM 360 Field Database to recieve number of issues.
+  #IN: Tickets from get_tickets
+  #OUT: Number of issues
+  def self.get_issues_count (tickets)
+      return JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/get_issues", timeout: nil, headers: {:params => {:ticket => tickets[:login], :project_id => tickets[:project], :count_only => "true"}}))["count"]
+  end
+
+  #Increments the company issue counts based on type of issues
   #IN: Companies Hash, JSON Stream of issues
   #OUT: Hash of company hashes sorted by company_id with counted issues
-  def self.company_issue_count (companies, issues)
-    total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
+  def self.company_issue_count (companies, issues, total=nil)
     issues.each do |i|
-      case i["status"]
-        when "Open"
-          companies[i["company_id"]][:open] += 1
-          total[:open] += 1
-        when "Work Completed"
-          companies[i["company_id"]][:complete] += 1
-          total[:complete] += 1
-        when "Ready to Inspect"
-          companies[i["company_id"]][:ready] += 1
-          total[:ready] += 1
-        when "Closed"
-          companies[i["company_id"]][:closed] += 1
-          total[:closed] += 1
+      if i["status"] != nil && i["company_id"] != nil then
+        case i["status"]
+          when "Open"
+            companies[i["company_id"]][:open] += 1
+            if total != nil then total[:open] += 1 end
+          when "Work Completed"
+            companies[i["company_id"]][:complete] += 1
+            if total != nil then total[:complete] += 1 end
+          when "Ready to Inspect"
+            companies[i["company_id"]][:ready] += 1
+            if total != nil then total[:ready] += 1 end
+          when "Closed"
+            companies[i["company_id"]][:closed] += 1
+            if total != nil then total[:closed] += 1 end
+        end
+        companies[i["company_id"]][:total] += 1
+        if total != nil then total[:total] += 1 end
       end
-      companies[i["company_id"]][:total] += 1
-      total[:total] += 1
     end
-    return companies, total
+    if total != nil then return companies, total else return companies end
   end
 
   #Orders companies based on open issues and dislpays the ones with the most in the widgets
