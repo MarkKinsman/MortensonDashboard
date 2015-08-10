@@ -73,6 +73,10 @@ module Field
         case i["status"]
           when "Open"
             companies[i["company_id"]][:status][:open] += 1
+
+                send_event('all_debug', {text: companies[i][:locations][areas[i["area_id"]]] })
+                sleep(10)
+
             if i["area_id"] != nil && areas != nil then companies[i][:locations][areas[i["area_id"]]] += 1 end
             if total != nil then total[:status][:open] += 1 end
           when "Work Completed"
