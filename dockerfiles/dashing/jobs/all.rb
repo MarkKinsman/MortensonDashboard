@@ -33,8 +33,8 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    all_total = {:name => "Total Issues Count", :open => 0, :status => {:complete => 0, :ready => 0, :closed => 0, :total => 0}, :locations => floors}
-    punch_total = {:name => "Punchlist Issues Count", :open => 0, :status => {:complete => 0, :ready => 0, :closed => 0, :total => 0}, :locations => floors}
+    all_total = {:name => "Total Issues Count", :status => {:open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}, :locations => floors}
+    punch_total = {:name => "Punchlist Issues Count", :status => {:open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}, :locations => floors}
 
     issues_count = Field.get_issues_count(tickets)
     areas = Field.get_areas(tickets, floors)

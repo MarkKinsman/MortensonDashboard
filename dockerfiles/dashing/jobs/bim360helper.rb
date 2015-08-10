@@ -69,12 +69,12 @@ module Field
   #OUT: Hash of company hashes sorted by company_id with counted issues
   def self.company_status_count (companies, issues, total=nil)
     send_event('all_debug', {text: 'In Method '})
-    sleep(10)
+    sleep(1)
 
     issues.each do |i|
       if i["status"] != nil && i["company_id"] != nil then
         send_event('all_debug', {text: 'In Loop' << i.inspect })
-        sleep(10)
+        sleep(1)
         case i["status"]
           when "Open"
             companies[i["company_id"]][:status][:open] += 1
