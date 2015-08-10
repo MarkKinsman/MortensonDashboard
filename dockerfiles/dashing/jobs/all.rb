@@ -5,6 +5,7 @@ require_relative 'bim360helper'
 #Widgets
 all_count_widgets=['all_total', 'all_company_0','all_company_1','all_company_2','all_company_3','all_company_4','all_company_5','all_company_6','all_company_7','all_company_8','all_company_9','all_company_10','all_company_11']
 punch_count_widgets=['total', 'company_0','company_1','company_2','company_3','company_4','company_5','company_6','company_7','company_8','company_9','company_10','company_11']
+floors={'2SA' => 0, '5SA' => 0, '6SA' => 0, '7SA' => 0, '7EE' => 0, '8SE' => 0}
 
 debug = ['all_debug', ""]
 
@@ -33,9 +34,15 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   begin
     all_total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
     punch_total = {:name => "Punchlist Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
+    all_location_total = {:name => "Total Issues Count", :total => 0, :locations => floors}
+    punch_location_total = {:name => "Total Issues Count", :total => 0, :locations => floors}
 
     issues_count = Field.get_issues_count(tickets)
-    iterator = 0
+    areas = Field.get_areas(tickets, floors)
+
+    send_event(debug[0], {text: debug[1] << areas.inspect})
+
+    iterator = '0'
     ((issues_count/100)+1).times do |i|
       stream = Field.get_issues(tickets, 100, i*100)
       punch_stream = stream.select { |k,v| k.has_key?("issue_type") && k["issue_type"].include?("Punch List")}

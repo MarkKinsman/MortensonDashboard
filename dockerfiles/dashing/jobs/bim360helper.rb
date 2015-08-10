@@ -36,6 +36,20 @@ module Field
     return companies
   end
 
+  #Performs the REST call to the BIM 360 Field Database to recieve areas.
+  #IN: Tickets from get_tickets
+  #OUT: Stream of JSON
+  def self.get_areas (tickets, floors)
+    areas = Hash.new({floor: 0})
+    stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/areas", timeout: nil, headers: {:params => {:ticket => tickets[:login], :project_id => tickets[:project]}}))
+    stream.each do |c|
+      floors.each do |k, v|
+        if c["path"].include?(k) then areas[c["area_id"]] = {floor: k}
+      end
+    end
+    return areas
+  end
+
   #Performs the REST call to the BIM 360 Field Database to recieve issues.
   #IN: Tickets from get_tickets
   #OUT: Stream of JSON
