@@ -68,8 +68,13 @@ module Field
   #IN: Companies Hash, JSON Stream of issues
   #OUT: Hash of company hashes sorted by company_id with counted issues
   def self.company_status_count (companies, issues, total=nil)
+    send_event(debug[0], {text: debug[1] << 'In Method ->' })
+    sleep(10)
+
     issues.each do |i|
       if i["status"] != nil && i["company_id"] != nil then
+        send_event(debug[0], {text: debug[1] << 'In Loop ->' })
+        sleep(10)
         case i["status"]
           when "Open"
             companies[i["company_id"]][:status][:open] += 1

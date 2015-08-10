@@ -26,8 +26,6 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
     all_companies = Field.get_companies(tickets, floors)
     punch_companies = Field.get_companies(tickets, floors)
 
-    send_event(debug[0], {text: debug[1] << all_companies.inspect})
-
   rescue Exception => e
     send_event(debug[0], {text: debug[1] << "Companies Download Error" + e.message + " -> "})
   else
@@ -46,8 +44,15 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
       stream = Field.get_issues(tickets, 100, i*100)
       punch_stream = stream.select { |k,v| k.has_key?("issue_type") && k["issue_type"].include?("Punch List")}
 
+            send_event(debug[0], {text: debug[1] << 'Got stream -> ' })
+
       all_companies, all_total = Field.company_status_count(all_companies, stream, all_total)
+
+            send_event(debug[0], {text: debug[1] << 'All companies ->' })
+
       punch_companies, punch_total = Field.company_status_count(punch_companies, punch_stream, punch_total)
+
+      send_event(debug[0], {text: debug[1] << 'Punch Done ->' })
 
       iterator = iterator + 1
       send_event(debug[0], {text: debug[1] << iterator })
