@@ -72,20 +72,20 @@ module Field
       if i["status"] != nil && i["company_id"] != nil then
         case i["status"]
           when "Open"
-            companies[i["company_id"]][:open] += 1
-            if total != nil then total[:open] += 1 end
+            companies[i["company_id"]][:status][:open] += 1
+            if total != nil then total[:status][:open] += 1 end
           when "Work Completed"
-            companies[i["company_id"]][:complete] += 1
-            if total != nil then total[:complete] += 1 end
+            companies[i["company_id"]][:status][:complete] += 1
+            if total != nil then total[:status][:complete] += 1 end
           when "Ready to Inspect"
-            companies[i["company_id"]][:ready] += 1
-            if total != nil then total[:ready] += 1 end
+            companies[i["company_id"]][:status][:ready] += 1
+            if total != nil then total[:status][:ready] += 1 end
           when "Closed"
-            companies[i["company_id"]][:closed] += 1
-            if total != nil then total[:closed] += 1 end
+            companies[i["company_id"]][:status][:closed] += 1
+            if total != nil then total[:status][:closed] += 1 end
         end
-        companies[i["company_id"]][:total] += 1
-        if total != nil then total[:total] += 1 end
+        companies[i["company_id"]][:status][:total] += 1
+        if total != nil then total[:status][:total] += 1 end
       end
     end
     if total != nil then return companies, total else return companies end
@@ -121,13 +121,13 @@ module Field
   #Orders companies based on open issues and dislpays the ones with the most in the widgets
   #IN: Companies hash, Array of text names for widgets
   def self.send_issue_counts (companies, widgets, total=nil)
-    companies_array = companies.sort_by { |k, v| v[:open] }.reverse!
+    companies_array = companies.sort_by { |k, v| v[:status][:open] }.reverse!
     unless total == nil
       companies_array.unshift([0, total])
     end
     send_event("all_debug", {text: companies_array.inspect })
     widgets.length.times do |i|
-      send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:open], ready: companies_array[i][1][:ready], complete: companies_array[i][1][:complete], closed: companies_array[i][1][:closed] })
+      send_event(widgets[i], {title: companies_array[i][1][:name], open: companies_array[i][1][:status][:open], ready: companies_array[i][1][:status][:ready], complete: companies_array[i][1][:status][:complete], closed: companies_array[i][1][:status][:closed] })
     end
   end
 
@@ -136,7 +136,7 @@ module Field
   def self.send_leaders (companies, leaderboard_widget)
     leaders = Hash.new({value: 0})
     companies.each do |k, v|
-      if v[:total] != 0
+      if v[:status][:total] != 0
         value = (v[:closed] * 100) / v[:total]
         leaders[v[:name]] = {label: v[:name], value: value}
       end
