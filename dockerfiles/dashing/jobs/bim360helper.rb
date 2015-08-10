@@ -73,7 +73,7 @@ module Field
 
     issues.each do |i|
       if i["status"] != nil && i["company_id"] != nil then
-        send_event('all_debug', {text: 'In Loop'})
+        send_event('all_debug', {text: 'In Loop' << i.inspect })
         sleep(10)
         case i["status"]
           when "Open"
