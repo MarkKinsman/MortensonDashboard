@@ -44,7 +44,7 @@ module Field
     stream = JSON.parse(RestClient::Request.execute(method: :get, url: "http://bim360field.autodesk.com/api/areas", timeout: nil, headers: {:params => {:ticket => tickets[:login], :project_id => tickets[:project]}}))
     stream.each do |c|
       floors.each do |k, v|
-        if c["path"].include?(k) then areas[c["area_id"]] = {floor: k}
+        if c["path"].include?(k) then areas[c["area_id"]] = {floor: k} end
       end
     end
     return areas
