@@ -5,7 +5,7 @@ require_relative 'bim360helper'
 #Widgets
 all_count_widgets=['all_total', 'all_company_0','all_company_1','all_company_2','all_company_3','all_company_4','all_company_5','all_company_6','all_company_7','all_company_8','all_company_9','all_company_10','all_company_11']
 punch_count_widgets=['total', 'company_0','company_1','company_2','company_3','company_4','company_5','company_6','company_7','company_8','company_9','company_10','company_11']
-floors={'2SA' => 0, '5SA' => 0, '6SA' => 0, '7SA' => 0, '7EE' => 0, '8SE' => 0}
+floors={'No Location' => 0, '2SA' => 0, '5SA' => 0, '6SA' => 0, '7SA' => 0, '7EE' => 0, '8SE' => 0}
 
 debug = ['all_debug', ""]
 
