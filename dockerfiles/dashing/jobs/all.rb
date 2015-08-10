@@ -39,10 +39,6 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
     issues_count = Field.get_issues_count(tickets)
     areas = Field.get_areas(tickets, floors)
 
-    send_event(debug[0], {text: debug[1] << areas.inspect})
-
-    send_event(debug[0], {text: debug[1] << " -> Finished Areas -> "})
-
     iterator = 0
     ((issues_count/100)+1).times do |i|
       stream = Field.get_issues(tickets, 100, i*100)
@@ -50,8 +46,6 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
 
       all_companies, all_total = Field.company_status_count(all_companies, stream, all_total)
       punch_companies, punch_total = Field.company_status_count(punch_companies, punch_stream, punch_total)
-
-
 
       iterator = iterator + 1
       send_event(debug[0], {text: debug[1] << iterator })

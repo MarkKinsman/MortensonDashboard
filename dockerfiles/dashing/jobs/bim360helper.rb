@@ -31,7 +31,7 @@ module Field
     companies = Hash.new({name: 0, :status => {open: 0, complete: 0, ready: 0, closed: 0, total: 0}, :locations => floors})
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => tickets[:login], :project_id => tickets[:project]}))
     stream.each do |c|
-      companies[c["company_id"]] = {name: c["name"], :status => {open: 0, complete: 0, ready: 0, closed: 0, total: 0}, :locations => floors}
+      companies[c["company_id"]] = {name: c["name"], status: = {open: 0, complete: 0, ready: 0, closed: 0, total: 0}, locations: = floors}
     end
     return companies
   end
