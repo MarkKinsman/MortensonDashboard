@@ -23,8 +23,9 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    all_companies = Field.get_companies(tickets)
-    punch_companies = Field.get_companies(tickets)
+    all_companies = Field.get_companies(tickets, floors)
+    punch_companies = Field.get_companies(tickets, floors)
+
   rescue Exception => e
     send_event(debug[0], {text: debug[1] << "Companies Download Error" + e.message + " -> "})
   else
@@ -32,22 +33,26 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
   end
 
   begin
-    all_total = {:name => "Total Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
-    punch_total = {:name => "Punchlist Issues Count", :open => 0, :complete => 0, :ready => 0, :closed => 0, :total => 0}
-    all_location_total = {:name => "Total Issues Count", :total => 0, :locations => floors}
-    punch_location_total = {:name => "Total Issues Count", :total => 0, :locations => floors}
+    all_total = {:name => "Total Issues Count", :open => 0, :status => {:complete => 0, :ready => 0, :closed => 0, :total => 0}, :locations => floors}
+    punch_total = {:name => "Punchlist Issues Count", :open => 0, :status => {:complete => 0, :ready => 0, :closed => 0, :total => 0}, :locations => floors}
 
     issues_count = Field.get_issues_count(tickets)
     areas = Field.get_areas(tickets, floors)
 
     send_event(debug[0], {text: debug[1] << areas.inspect})
 
-    iterator = '0'
+    send_event(debug[0], {text: debug[1] << " -> Finished Areas -> "})
+
+    iterator = 0
     ((issues_count/100)+1).times do |i|
       stream = Field.get_issues(tickets, 100, i*100)
       punch_stream = stream.select { |k,v| k.has_key?("issue_type") && k["issue_type"].include?("Punch List")}
-      all_companies, all_total = Field.company_issue_count(all_companies, stream, all_total)
-      punch_companies, punch_total = Field.company_issue_count(punch_companies, punch_stream, punch_total)
+
+      all_companies, all_total = Field.company_status_count(all_companies, stream, all_total)
+      punch_companies, punch_total = Field.company_status_count(punch_companies, punch_stream, punch_total)
+
+
+
       iterator = iterator + 1
       send_event(debug[0], {text: debug[1] << iterator })
     end

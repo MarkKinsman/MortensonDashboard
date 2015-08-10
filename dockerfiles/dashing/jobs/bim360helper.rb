@@ -27,11 +27,11 @@ module Field
   #Performs the REST call to the BIM 360 Field Database to recieve companies.
   #IN: Tickets from get_tickets
   #OUT: Hash of company hashes sorted by company_id,
-  def self.get_companies (tickets)
-    companies = Hash.new({name: 0, open: 0, complete: 0, ready: 0, closed: 0, total: 0})
+  def self.get_companies (tickets, floors=nil)
+    companies = Hash.new({name: 0, :status => {open: 0, complete: 0, ready: 0, closed: 0, total: 0}, :locations => floors})
     stream = JSON.parse(RestClient.get("http://bim360field.autodesk.com/api/companies/", :params => {:ticket => tickets[:login], :project_id => tickets[:project]}))
     stream.each do |c|
-      companies[c["company_id"]] = {name: c["name"], open: 0, ready: 0, complete: 0, closed: 0, total: 0}
+      companies[c["company_id"]] = {name: c["name"]}
     end
     return companies
   end
@@ -67,7 +67,34 @@ module Field
   #Increments the company issue counts based on type of issues
   #IN: Companies Hash, JSON Stream of issues
   #OUT: Hash of company hashes sorted by company_id with counted issues
-  def self.company_issue_count (companies, issues, total=nil)
+  def self.company_status_count (companies, issues, total=nil)
+    issues.each do |i|
+      if i["status"] != nil && i["company_id"] != nil then
+        case i["status"]
+          when "Open"
+            companies[i["company_id"]][:open] += 1
+            if total != nil then total[:open] += 1 end
+          when "Work Completed"
+            companies[i["company_id"]][:complete] += 1
+            if total != nil then total[:complete] += 1 end
+          when "Ready to Inspect"
+            companies[i["company_id"]][:ready] += 1
+            if total != nil then total[:ready] += 1 end
+          when "Closed"
+            companies[i["company_id"]][:closed] += 1
+            if total != nil then total[:closed] += 1 end
+        end
+        companies[i["company_id"]][:total] += 1
+        if total != nil then total[:total] += 1 end
+      end
+    end
+    if total != nil then return companies, total else return companies end
+  end
+
+  #Increments the company issue counts based on type of issues
+  #IN: Companies Hash, JSON Stream of issues
+  #OUT: Hash of company hashes sorted by company_id with counted issues
+  def self.company_location_count (companies, issues, total=nil)
     issues.each do |i|
       if i["status"] != nil && i["company_id"] != nil then
         case i["status"]
