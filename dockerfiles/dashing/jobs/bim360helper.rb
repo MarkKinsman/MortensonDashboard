@@ -75,9 +75,9 @@ module Field
             companies[i["company_id"]][:status][:open] += 1
 
             send_event('all_debug', {text: areas[i["area_id"]].inspect << "  -------   " << companies[i][:locations].inspect << "    ---------     " << companies[i][:locations][areas[i["area_id"]]].inspect })
-            sleep(100)
+            sleep(10)
 
-            if i["area_id"] != nil && areas != nil then companies[i][:locations][areas[i["area_id"]]] += 1 end
+            if i["area_id"] != nil && areas != nil then companies[i][:locations][areas[i["area_id"][:floor]]] += 1 end
             if total != nil then total[:status][:open] += 1 end
           when "Work Completed"
             companies[i["company_id"]][:status][:complete] += 1
