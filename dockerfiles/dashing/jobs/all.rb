@@ -26,6 +26,8 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
     all_companies = Field.get_companies(tickets, floors)
     punch_companies = Field.get_companies(tickets, floors)
 
+    send_event(debug[0], {text: debug[1] << all_companies.inspect})
+
   rescue Exception => e
     send_event(debug[0], {text: debug[1] << "Companies Download Error" + e.message + " -> "})
   else
