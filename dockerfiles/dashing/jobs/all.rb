@@ -43,10 +43,10 @@ SCHEDULER.every '10m', :first_in => 0, allow_overlapping: false do |job|
     ((issues_count/100)+1).times do |i|
       stream = Field.get_issues(tickets, 100, i*100)
       punch_stream = stream.select { |k,v| k.has_key?("issue_type") && k["issue_type"].include?("Punch List")}
-      all_companies, all_total = Field.company_status_count(all_companies, stream, all_total)
-      punch_companies, punch_total = Field.company_status_count(punch_companies, punch_stream, punch_total)
+      all_companies, all_total = Field.company_status_count(all_companies, stream, all_total, areas)
+      punch_companies, punch_total = Field.company_status_count(punch_companies, punch_stream, punch_total, areas)
       iterator = iterator + 1
-      send_event(debug[0], {text: debug[1] << iterator })
+      send_event(debug[0], {text: debug[1] << companies.inspect })
     end
   rescue Exception => e
     send_event(debug[0], {text: debug[1] << "Count Issues Error" + e.message + " -> "})

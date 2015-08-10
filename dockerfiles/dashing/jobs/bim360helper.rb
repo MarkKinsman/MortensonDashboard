@@ -67,12 +67,13 @@ module Field
   #Increments the company issue counts based on type of issues
   #IN: Companies Hash, JSON Stream of issues
   #OUT: Hash of company hashes sorted by company_id with counted issues
-  def self.company_status_count (companies, issues, total=nil)
+  def self.company_status_count (companies, issues, total=nil, areas = nil)
     issues.each do |i|
       if i["status"] != nil && i["company_id"] != nil then
         case i["status"]
           when "Open"
             companies[i["company_id"]][:status][:open] += 1
+            if i["area_id"] != nil && areas != nil then companies[i[:locations[areas[i["area_id"]]]]] += 1 end
             if total != nil then total[:status][:open] += 1 end
           when "Work Completed"
             companies[i["company_id"]][:status][:complete] += 1
@@ -86,33 +87,6 @@ module Field
         end
         companies[i["company_id"]][:status][:total] += 1
         if total != nil then total[:status][:total] += 1 end
-      end
-    end
-    if total != nil then return companies, total else return companies end
-  end
-
-  #Increments the company issue counts based on type of issues
-  #IN: Companies Hash, JSON Stream of issues
-  #OUT: Hash of company hashes sorted by company_id with counted issues
-  def self.company_location_count (companies, issues, total=nil)
-    issues.each do |i|
-      if i["status"] != nil && i["company_id"] != nil then
-        case i["status"]
-          when "Open"
-            companies[i["company_id"]][:open] += 1
-            if total != nil then total[:open] += 1 end
-          when "Work Completed"
-            companies[i["company_id"]][:complete] += 1
-            if total != nil then total[:complete] += 1 end
-          when "Ready to Inspect"
-            companies[i["company_id"]][:ready] += 1
-            if total != nil then total[:ready] += 1 end
-          when "Closed"
-            companies[i["company_id"]][:closed] += 1
-            if total != nil then total[:closed] += 1 end
-        end
-        companies[i["company_id"]][:total] += 1
-        if total != nil then total[:total] += 1 end
       end
     end
     if total != nil then return companies, total else return companies end
@@ -137,7 +111,7 @@ module Field
     leaders = Hash.new({value: 0})
     companies.each do |k, v|
       if v[:status][:total] != 0
-        value = (v[:closed] * 100) / v[:total]
+        value = (v[:status][:closed] * 100) / v[:status][:total]
         leaders[v[:name]] = {label: v[:name], value: value}
       end
     end
