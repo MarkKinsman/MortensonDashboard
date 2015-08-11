@@ -1,5 +1,5 @@
 class Dashing.Issuesummary extends Dashing.Widget
-  @accessor 'open', Dashing.AnimatedValue
+  @accessor 'primary', Dashing.AnimatedValue
 
 #  @accessor 'difference', ->
 #    if @get('last')
@@ -11,9 +11,9 @@ class Dashing.Issuesummary extends Dashing.Widget
 #    else
 #      ""
 
-  @accessor 'arrow', ->
-    if @get('last')
-      if parseInt(@get('current')) > parseInt(@get('last')) then 'icon-arrow-up' else 'icon-arrow-down'
+#  @accessor 'arrow', ->
+#    if @get('last')
+#      if parseInt(@get('current')) > parseInt(@get('last')) then 'icon-arrow-up' else 'icon-arrow-down'
 
   onData: (data) ->
     if data.status
