@@ -73,12 +73,11 @@ module Field
         case i["status"]
           when "Open"
             companies[i["company_id"]][:status][:open] += 1
-            send_event('all_debug', {text: areas[i["area_id"]].inspect << "  -------   " << companies[i][:locations].inspect << "    ---------     " << companies[i][:locations][areas[i["area_id"]][:floor]].inspect })
-            sleep(10)
             if i["area_id"] != nil && areas != nil then
-              if companies[i][:locations][areas[i["area_id"]][:floor] != nil
-                then companies[i][:locations][areas[i["area_id"]][:floor] += 1
-                else companies[i][:locations]['No Location'[:floor]
+              if companies[i][:locations][areas[i["area_id"]][:floor] != nil then
+                companies[i][:locations][areas[i["area_id"]][:floor] += 1
+              else
+                companies[i][:locations]['No Location'[:floor]
               end
             end
             if total != nil then total[:status][:open] += 1 end
