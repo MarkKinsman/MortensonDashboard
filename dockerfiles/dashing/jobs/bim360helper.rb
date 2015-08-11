@@ -73,7 +73,7 @@ module Field
         case i["status"]
           when "Open"
             companies[i["company_id"]][:status][:open] += 1
-            if i["area_id"] != nil && areas != nil && companies[i][:locations][areas[i["area_id"]][:floor] != nil then
+            if i["area_id"] != nil && areas != nil && companies[i][:locations][areas[i["area_id"]][:floor] != nil
                 companies[i][:locations][areas[i["area_id"]][:floor] += 1
             elsif
                 companies[i][:locations]['No Location'] += 1
