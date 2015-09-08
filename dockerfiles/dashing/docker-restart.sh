@@ -5,8 +5,8 @@ set -o errexit
 WORKDIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
 cd "${WORKDIR}"/../../
-git pull origin dev
-git checkout dev
+git pull origin master
+git checkout master
 
 cd "${WORKDIR}"
 
